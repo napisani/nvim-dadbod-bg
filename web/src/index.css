@@ -26,12 +26,6 @@
   }
 }
 
-
-.output-line > .prefix {
-  margin: 0 0.5rem;
-  color: grey;
-}
-
 .output-line {
   display: flex;
   flex-direction: row;

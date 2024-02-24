@@ -1,5 +1,7 @@
 import { QueryResults } from './query-results'
 
+export const newlineRegex = /(\r|\n|\r\n)/g
+
 export function parseJsonSections(results: QueryResults) {
   const re = /(^|\r|\n|\r\n)(.*>)/g
   console.log('content', results.content)

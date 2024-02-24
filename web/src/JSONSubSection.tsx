@@ -1,12 +1,12 @@
 import JsonView from '@uiw/react-json-view'
 import { basicTheme } from '@uiw/react-json-view/basic'
-import Mark from 'mark.js'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { JSONViewerControls, JSONViewerSettings } from './JSONViewerControls'
 import { Prefix } from './Prefix'
 import { SubQueryResults } from './query-results'
 import { useScrollTo } from './useScrollTo'
 
+import { useMarker } from './useMarker'
 export function JSONSubSection({
   section,
   focused,
@@ -21,13 +21,7 @@ export function JSONSubSection({
   })
   const searchNodeRef = useRef<HTMLDivElement>(null)
   useScrollTo({ focused, ref: searchNodeRef })
-
-  const markInstance = useMemo(() => {
-    if (!searchNodeRef.current) {
-      return
-    }
-    return new Mark(searchNodeRef.current)
-  }, [searchNodeRef.current])
+  useMarker({ searchNodeRef, settings })
 
   const filteredContent = useMemo(() => {
     if (
@@ -41,20 +35,6 @@ export function JSONSubSection({
       return JSON.stringify(item).includes(settings.filter!)
     })
   }, [section.content, settings.filter, settings.applyFilter])
-
-  useEffect(() => {
-    markInstance?.unmark({
-      done: () => {
-        if (!settings.filter) {
-          return
-        }
-        if (settings.filter.trim() === '') {
-          return
-        }
-        markInstance?.mark(settings.filter)
-      },
-    })
-  }, [settings])
 
   const jsonView = useMemo(() => {
     return (
@@ -81,7 +61,11 @@ export function JSONSubSection({
               justifyContent: 'right',
             }}
           >
-            <JSONViewerControls settings={settings} onChange={setSettings} />
+            <JSONViewerControls
+              focused={focused}
+              settings={settings}
+              onChange={setSettings}
+            />
           </div>
           <div ref={searchNodeRef}>{jsonView}</div>
         </div>

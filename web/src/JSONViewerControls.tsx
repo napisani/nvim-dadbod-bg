@@ -1,5 +1,10 @@
+import { useRef } from 'react'
+import { FilterControls } from './FilterControls'
+import { debounce } from './utils'
+
 export interface JSONViewerControlsProps {
   settings: JSONViewerSettings
+  focused: boolean
   onChange: (settings: JSONViewerSettings) => void
 }
 
@@ -20,18 +25,6 @@ function toBooleanOrNumber(value: string) {
   return parseInt(value)
 }
 
-function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
-  let timeout: any
-  return function (this: any, ...args: any[]) {
-    const later = () => {
-      clearTimeout(timeout)
-      func.apply(this, args)
-    }
-    clearTimeout(timeout)
-    timeout = setTimeout(later, wait)
-  } as any
-}
-
 const labelStyle = {
   fontSize: 14,
   marginLeft: 10,
@@ -39,9 +32,11 @@ const labelStyle = {
 
 export function JSONViewerControls({
   settings,
+  focused,
   onChange,
 }: JSONViewerControlsProps) {
   const debouncedOnChange = debounce(onChange, 500)
+  const collapsedRef = useRef<HTMLSelectElement>(null)
   return (
     <div
       style={{
@@ -53,14 +48,20 @@ export function JSONViewerControls({
       <label style={labelStyle}>
         Collapsed:
         <select
+          ref={collapsedRef}
           style={{ marginLeft: 10 }}
-          tabIndex={3}
+          tabIndex={focused ? 3 : -1}
           value={toString(settings.collapsed)}
           onChange={(e) => {
             onChange({
               ...settings,
               collapsed: toBooleanOrNumber(e.target.value),
             })
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              collapsedRef.current?.blur()
+            }
           }}
         >
           <option value="true">Collapse All</option>
@@ -70,35 +71,17 @@ export function JSONViewerControls({
         </select>
       </label>
 
-      <label style={labelStyle}>
-        Apply Filter:
-        <input
-          style={{ marginLeft: 10 }}
-          tabIndex={2}
-          type="checkbox"
-          checked={settings.applyFilter}
-          onChange={(e) => {
-            onChange({
-              ...settings,
-              applyFilter: e.target.checked,
-            })
-          }}
-        />
-      </label>
-
-      <label style={labelStyle}>
-        Search:
-        <input
-          style={{ marginLeft: 10 }}
-          tabIndex={1}
-          onChange={(e) => {
-            debouncedOnChange({
-              ...settings,
-              filter: e.target.value,
-            })
-          }}
-        />
-      </label>
+      <FilterControls
+        filter={settings.filter}
+        focused={focused}
+        setFilter={(filter) => {
+          debouncedOnChange({ ...settings, filter })
+        }}
+        applyFilter={settings.applyFilter}
+        setApplyFilter={(applyFilter) => {
+          onChange({ ...settings, applyFilter })
+        }}
+      />
     </div>
   )
 }
