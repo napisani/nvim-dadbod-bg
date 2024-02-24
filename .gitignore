@@ -7,3 +7,5 @@ nvim_dadbod_bg
 /node_modules
 **/node_modules
 
+
+dist/
