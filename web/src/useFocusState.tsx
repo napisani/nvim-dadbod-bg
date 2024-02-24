@@ -29,7 +29,7 @@ export const FocusProvider = ({ children }: { children: React.ReactNode }) => {
       } else if (e.key === 'k') {
         e.preventDefault()
         setFocusedRow(row === null ? 0 : (row - 1) % len)
-      } else if (e.key === 'Tab') {
+      } else if (e.key === 'Tab' || e.key === '/') {
         e.preventDefault()
         if (row !== null && row !== undefined) {
           const focusedSubSection = subSectionRefs.current[row].parentElement

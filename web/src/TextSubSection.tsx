@@ -4,9 +4,10 @@ import { TextViewerControls, TextViewerSettings } from './TextViewerControls'
 import { SubQueryResults } from './query-results'
 import { useScrollTo } from './useScrollTo'
 
-import { newlineRegex } from './json-parser.util'
+import { newlineRegex } from './json.util'
 import { useFocus } from './useFocusState'
 import { useMarker } from './useMarker'
+import { useGlobalSettings } from './useGlobalSettings'
 export function TextSubSection({
   section,
   index,
@@ -14,10 +15,21 @@ export function TextSubSection({
   section: SubQueryResults
   index: number
 }) {
+  const { globalSettings } = useGlobalSettings()
   const [settings, setSettings] = useState<TextViewerSettings>({
     filter: '',
     applyFilter: true,
   })
+
+  useEffect(() => {
+    setSettings({
+      ...settings,
+      // if the global settings change -- override the local settings with the global settings
+      // so that you can see the changes made immediately. Then each section can have its own settings after that.
+      applyFilter: globalSettings.applyFilter,
+    })
+  }, [globalSettings])
+
   const searchNodeRef = useRef<HTMLDivElement>(null)
   const { registerSubSectionRef, focusedRow, setFocusedRow } = useFocus()
   useEffect(() => {
@@ -64,10 +76,7 @@ export function TextSubSection({
             justifyContent: 'right',
           }}
         >
-          <TextViewerControls
-            settings={settings}
-            onChange={setSettings}
-          />
+          <TextViewerControls settings={settings} onChange={setSettings} />
         </div>
         <div ref={searchNodeRef}>
           <pre

@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { JSONSubSection } from './JSONSubSection'
 import { TextSubSection } from './TextSubSection'
-import { parseJsonSections } from './json-parser.util'
+import { parseJsonSections } from './json.util'
 import { QueryResults } from './query-results'
 
 export function Results({ results }: { results: QueryResults }) {
@@ -12,6 +12,7 @@ export function Results({ results }: { results: QueryResults }) {
 
   return (
     <>
+      <h1>Query results</h1>
       <div>
         {contentSections.map((section, index) => {
           if (section.type === 'json') {

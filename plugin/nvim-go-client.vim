@@ -1,7 +1,7 @@
-if exists('g:loaded_example_nvim_go_client')
+if exists('g:loaded_nvim_dadbod_dadbod_bg')
     finish
 endif
-let g:loaded_example_nvim_go_client = 1
+let g:loaded_nvim_dadbod_dadbod_bg = 1
 
 " not every error the go-client runs into is logged. Some are printed
 " to stderr.  This routine captures that and prints it to messages;
@@ -16,8 +16,11 @@ endfunction
 " to work you need to have the on_error key. The 'rpc' key is to let
 " nvim know to communicate with the process via msgpack-rpc over stdout.
 " See :h msgpack-rpc and :h jobstart() for more information.
-function! s:Start_example_nvim_go_client(host) abort
-    return jobstart(['nvim-dadbod-ext'], {
+let s:plugin_name = 'nvim-dadbod-bg'
+let s:plugin_root = fnamemodify(resolve(expand('<sfile>:p')), ':h:h')
+let s:plugin_cmd = [s:plugin_root . '/' . s:plugin_name]
+function! s:Sart_nvim_dadbog_bg(host) abort
+    return jobstart(s:plugin_cmd, {
         \ 'rpc': v:true, 
         \ 'on_stderr': function('s:panic')
         \ })
@@ -27,13 +30,14 @@ endfunction
 " this path is rooted is dependent on your nvim. e.g. in my setup the complete path is 
 " /usr/share/nvim/runtime/autoload/remote/host.vim.
 " You may want to read :help remote_plugin for more information.
-call remote#host#Register('nvim_dadbod_ext', 'x', function('s:Start_example_nvim_go_client'))
+call remote#host#Register('nvim_dadbod_bg', 'x', function('s:Sart_nvim_dadbog_bg'))
 
 " do not edit manually.
 " the name for the 'host' you choose when running -manifest must match the
 " name you use in the above call to remote#host#Register. e.g. in this case
-" the 'host' name is 'nvim_dadbod_ext'.
-call remote#host#RegisterPlugin('nvim_dadbod_ext', '0', [
+" the 'host' name is 'nvim_dadbod_bg'.
+call remote#host#RegisterPlugin('nvim_dadbod_bg', '0', [
 \ {'type': 'autocmd', 'name': 'User', 'sync': 0, 'opts': {'eval': '{''Filename'': expand(''<amatch>:h'')}', 'group': 'ExmplNvGoClientGrp', 'pattern': '*DBExecutePost'}},
 \ ])
+
 

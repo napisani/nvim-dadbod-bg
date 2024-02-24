@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
+
+	"path"
 
 	"github.com/neovim/go-client/nvim/plugin"
 )
@@ -11,19 +14,37 @@ type FileAutocmdEval struct {
 	Filename string `eval:"expand('<amatch>:h')"`
 }
 
+func initLog(debug bool) {
+	tmpDir := os.TempDir()
+	logPath := path.Join(tmpDir, "nvim-dbbg.log")
+	if debug {
+		fmt.Println("Logging to: " + logPath)
+	}
+	l, _ := os.Create(logPath)
+	log.SetOutput(l)
+}
+
 func main() {
 	// create a log to log to right away. It will help with debugging
-	l, _ := os.Create("/tmp/dadbod-ext.log")
-	log.SetOutput(l)
+	filename := os.Getenv("NVIM_DBBG_FILE")
+	initLog(filename != "")
+	if filename != "" {
+
+		log.Print("Setting initial results file to: " + filename)
+		if _, err := os.Stat(filename); err == nil {
+			SetQueryResults(filename)
+		} else {
+			log.Print("File does not exist: " + filename)
+		}
+	}
 
 	go StartServer()
 	plugin.Main(func(p *plugin.Plugin) error {
 		p.HandleAutocmd(&plugin.AutocmdOptions{Event: "User", Group: "ExmplNvGoClientGrp", Pattern: "*DBExecutePost", Eval: "*"},
 			func(eval *FileAutocmdEval) {
-				log.Print("DBEXEC wrote a buffer line: " + eval.Filename)
+				log.Print("DBExecutePost - wrote file: " + eval.Filename)
 				SetQueryResults(eval.Filename)
 				BroadcastQueryResults()
-				log.Print("DBEXEC wrote a buffer line: " + GetQueryResults().Content)
 			})
 		return nil
 	})

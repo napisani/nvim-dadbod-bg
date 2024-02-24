@@ -1,6 +1,6 @@
 *.log
-nvim-dadbod-ext
-nvim-dadbod-exts
+nvim-dadbod-bg
+nvim_dadbod_bg
 /dist
 **/dist
 

@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { FilterControls } from './FilterControls'
-import { debounce } from './utils'
+import { booleanOrNumberToString, debounce, stringToBooleanOrNumber } from './utils'
 
 export interface JSONViewerControlsProps {
   settings: JSONViewerSettings
@@ -11,17 +11,7 @@ export interface JSONViewerSettings {
   collapsed: number | boolean
   filter: string
   applyFilter: boolean
-}
-
-function toString(collapsed: number | boolean) {
-  return `${collapsed}`
-}
-
-function toBooleanOrNumber(value: string) {
-  if (value === 'true' || value === 'false') {
-    return value === 'true'
-  }
-  return parseInt(value)
+  theme: string
 }
 
 const labelStyle = {
@@ -48,11 +38,11 @@ export function JSONViewerControls({
         <select
           ref={collapsedRef}
           style={{ marginLeft: 10 }}
-          value={toString(settings.collapsed)}
+          value={booleanOrNumberToString(settings.collapsed)}
           onChange={(e) => {
             onChange({
               ...settings,
-              collapsed: toBooleanOrNumber(e.target.value),
+              collapsed: stringToBooleanOrNumber(e.target.value),
             })
           }}
           onKeyDown={(e) => {

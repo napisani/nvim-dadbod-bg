@@ -9,3 +9,14 @@ export function debounce<T extends (...args: any[]) => any>(func: T, wait: numbe
     timeout = setTimeout(later, wait)
   } as any
 }
+
+export function stringToBooleanOrNumber(value: string) {
+  if (value === 'true' || value === 'false') {
+    return value === 'true'
+  }
+  return parseInt(value)
+}
+
+export function booleanOrNumberToString(value: number | boolean) {
+  return `${value}`
+}

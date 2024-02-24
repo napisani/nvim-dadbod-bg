@@ -1,4 +1,4 @@
-module github.com/napisani/nvim-dadbod-exts
+module github.com/napisani/nvim-dadbod-bg
 
 go 1.22
 

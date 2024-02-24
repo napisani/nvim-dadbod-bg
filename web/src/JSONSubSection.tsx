@@ -1,12 +1,14 @@
 import JsonView from '@uiw/react-json-view'
-import { basicTheme } from '@uiw/react-json-view/basic'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { JSONViewerControls, JSONViewerSettings } from './JSONViewerControls'
 import { Prefix } from './Prefix'
 import { SubQueryResults } from './query-results'
-import { useScrollTo } from './useScrollTo'
-import { useMarker } from './useMarker'
 import { useFocus } from './useFocusState'
+import { useGlobalSettings } from './useGlobalSettings'
+import { useMarker } from './useMarker'
+import { useScrollTo } from './useScrollTo'
+
+import { jsonViewerThemes } from './json.util'
 
 export function JSONSubSection({
   section,
@@ -15,11 +17,29 @@ export function JSONSubSection({
   section: SubQueryResults
   index: number
 }) {
+  const { globalSettings } = useGlobalSettings()
   const [settings, setSettings] = useState<JSONViewerSettings>({
-    collapsed: 1,
+    collapsed: globalSettings.collapsed,
+    theme: globalSettings.theme,
     filter: '',
     applyFilter: true,
   })
+
+  useEffect(() => {
+    setSettings({
+      ...settings,
+      // if the global settings change -- override the local settings with the global settings
+      // so that you can see the changes made immediately. Then each section can have its own settings after that.
+      theme: globalSettings.theme,
+      collapsed: globalSettings.collapsed,
+      applyFilter: globalSettings.applyFilter,
+    })
+  }, [globalSettings])
+
+  const theme = useMemo(() => {
+    return jsonViewerThemes[settings.theme] ?? jsonViewerThemes.basicTheme
+  }, [settings.theme])
+
   const searchNodeRef = useRef<HTMLDivElement>(null)
   const { registerSubSectionRef, focusedRow, setFocusedRow } = useFocus()
   useEffect(() => {
@@ -49,12 +69,12 @@ export function JSONSubSection({
   const jsonView = useMemo(() => {
     return (
       <JsonView
-        style={basicTheme}
+        style={theme}
         collapsed={settings.collapsed}
         value={filteredContent as object}
       />
     )
-  }, [filteredContent, settings.collapsed])
+  }, [filteredContent, settings.collapsed, theme])
 
   return (
     <>
@@ -76,10 +96,7 @@ export function JSONSubSection({
               justifyContent: 'right',
             }}
           >
-            <JSONViewerControls
-              settings={settings}
-              onChange={setSettings}
-            />
+            <JSONViewerControls settings={settings} onChange={setSettings} />
           </div>
           <div ref={searchNodeRef}>{jsonView}</div>
         </div>

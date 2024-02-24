@@ -1,4 +1,13 @@
 import { QueryResults } from './query-results'
+import { lightTheme } from '@uiw/react-json-view/light'
+import { darkTheme } from '@uiw/react-json-view/dark'
+import { nordTheme } from '@uiw/react-json-view/nord'
+import { githubLightTheme } from '@uiw/react-json-view/githubLight'
+import { githubDarkTheme } from '@uiw/react-json-view/githubDark'
+import { vscodeTheme } from '@uiw/react-json-view/vscode'
+import { gruvboxTheme } from '@uiw/react-json-view/gruvbox'
+import { monokaiTheme } from '@uiw/react-json-view/monokai'
+import { basicTheme } from '@uiw/react-json-view/basic'
 
 export const newlineRegex = /(\r|\n|\r\n)/g
 
@@ -50,4 +59,18 @@ export function parseJsonSections(results: QueryResults) {
       }
     })
   return contentSections
+}
+
+export const jsonViewerThemes: {
+  [key: string]: any
+} = {
+  lightTheme,
+  darkTheme,
+  nordTheme,
+  githubLightTheme,
+  githubDarkTheme,
+  vscodeTheme,
+  gruvboxTheme,
+  monokaiTheme,
+  basicTheme,
 }
