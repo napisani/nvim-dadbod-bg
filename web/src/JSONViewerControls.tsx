@@ -4,7 +4,6 @@ import { debounce } from './utils'
 
 export interface JSONViewerControlsProps {
   settings: JSONViewerSettings
-  focused: boolean
   onChange: (settings: JSONViewerSettings) => void
 }
 
@@ -32,7 +31,6 @@ const labelStyle = {
 
 export function JSONViewerControls({
   settings,
-  focused,
   onChange,
 }: JSONViewerControlsProps) {
   const debouncedOnChange = debounce(onChange, 500)
@@ -50,7 +48,6 @@ export function JSONViewerControls({
         <select
           ref={collapsedRef}
           style={{ marginLeft: 10 }}
-          tabIndex={focused ? 3 : -1}
           value={toString(settings.collapsed)}
           onChange={(e) => {
             onChange({
@@ -72,8 +69,6 @@ export function JSONViewerControls({
       </label>
 
       <FilterControls
-        filter={settings.filter}
-        focused={focused}
         setFilter={(filter) => {
           debouncedOnChange({ ...settings, filter })
         }}

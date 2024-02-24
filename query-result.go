@@ -36,5 +36,5 @@ func GetQueryResults() QueryResults {
 // init module function
 func init() {
   log.Println("init query-result.go")
-	SetQueryResults("/tmp/12.json")
+	SetQueryResults("/tmp/11.fix")
 }

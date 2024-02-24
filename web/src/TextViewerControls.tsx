@@ -3,7 +3,6 @@ import { debounce } from './utils'
 
 export interface TextViewerControlsProps {
   settings: TextViewerSettings
-  focused: boolean
   onChange: (settings: TextViewerSettings) => void
 }
 
@@ -14,7 +13,6 @@ export interface TextViewerSettings {
 
 export function TextViewerControls({
   settings,
-  focused,
   onChange,
 }: TextViewerControlsProps) {
   const debouncedOnChange = debounce(onChange, 500)
@@ -27,8 +25,6 @@ export function TextViewerControls({
       }}
     >
       <FilterControls
-        filter={settings.filter}
-        focused={focused}
         setFilter={(filter) => {
           debouncedOnChange({ ...settings, filter })
         }}

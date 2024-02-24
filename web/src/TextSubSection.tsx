@@ -1,23 +1,34 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Prefix } from './Prefix'
 import { TextViewerControls, TextViewerSettings } from './TextViewerControls'
 import { SubQueryResults } from './query-results'
 import { useScrollTo } from './useScrollTo'
 
-import { useMarker } from './useMarker'
 import { newlineRegex } from './json-parser.util'
+import { useFocus } from './useFocusState'
+import { useMarker } from './useMarker'
 export function TextSubSection({
   section,
-  focused,
+  index,
 }: {
   section: SubQueryResults
-  focused: boolean
+  index: number
 }) {
   const [settings, setSettings] = useState<TextViewerSettings>({
     filter: '',
     applyFilter: true,
   })
   const searchNodeRef = useRef<HTMLDivElement>(null)
+  const { registerSubSectionRef, focusedRow, setFocusedRow } = useFocus()
+  useEffect(() => {
+    if (searchNodeRef.current === null) {
+      return
+    }
+    registerSubSectionRef(searchNodeRef.current, index)
+  }, [index, registerSubSectionRef])
+
+  const focused = focusedRow === index
+
   useScrollTo({ focused, ref: searchNodeRef })
   useMarker({ searchNodeRef, settings })
 
@@ -34,7 +45,12 @@ export function TextSubSection({
   }, [section.content, settings.filter, settings.applyFilter])
 
   return (
-    <div className={`output-line ${focused ? 'focused' : ''}`}>
+    <div
+      onClick={() => {
+        setFocusedRow(index)
+      }}
+      className={`output-line ${focused ? 'focused' : ''}`}
+    >
       <Prefix prefix={section.prefix} />
       <div
         style={{
@@ -49,7 +65,6 @@ export function TextSubSection({
           }}
         >
           <TextViewerControls
-            focused={focused}
             settings={settings}
             onChange={setSettings}
           />
@@ -60,6 +75,7 @@ export function TextSubSection({
               margin: 0,
               fontSize: 13,
             }}
+            tabIndex={-1}
           >
             {filteredContent}
           </pre>

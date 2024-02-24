@@ -22,6 +22,7 @@ func main() {
 			func(eval *FileAutocmdEval) {
 				log.Print("DBEXEC wrote a buffer line: " + eval.Filename)
 				SetQueryResults(eval.Filename)
+				BroadcastQueryResults()
 				log.Print("DBEXEC wrote a buffer line: " + GetQueryResults().Content)
 			})
 		return nil

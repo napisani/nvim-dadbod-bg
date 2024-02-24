@@ -4,19 +4,29 @@ const labelStyle = {
   fontSize: 14,
   marginLeft: 10,
 }
+function keyDownHandler(
+  element: HTMLInputElement,
+  e: React.KeyboardEvent<HTMLInputElement>
+) {
+  if (e.key === 'Escape') {
+    e.preventDefault()
+    element.blur()
+  } else if (e.key === 'Tab') {
+    e.preventDefault()
+    element.blur()
+  }
+}
+
 export function FilterControls({
-  focused,
-  setFilter,
   applyFilter,
   setApplyFilter,
+  setFilter,
 }: {
-  focused: boolean
-  filter: string
   setFilter: (filter: string) => void
   applyFilter: boolean
   setApplyFilter: (applyFilter: boolean) => void
 }) {
-  const inputRef = useRef<HTMLInputElement>(null)
+  const filterRef = useRef<HTMLInputElement>(null)
   const checkboxRef = useRef<HTMLInputElement>(null)
   return (
     <>
@@ -25,17 +35,12 @@ export function FilterControls({
         <input
           ref={checkboxRef}
           style={{ marginLeft: 10 }}
-          tabIndex={-1}
           type="checkbox"
           checked={applyFilter}
           onChange={(e) => {
             setApplyFilter(e.target.checked)
           }}
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') {
-              checkboxRef.current?.blur()
-            }
-          }}
+          onKeyDown={keyDownHandler.bind(null, checkboxRef.current!)}
         />
       </label>
 
@@ -43,17 +48,13 @@ export function FilterControls({
         Search:
         <input
           style={{ marginLeft: 10 }}
-          ref={inputRef}
-          tabIndex={focused ? 2 : -1}
+          ref={filterRef}
+          className={'filter-input'}
           type="text"
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') {
-              inputRef.current?.blur()
-            }
-          }}
           onChange={(e) => {
             setFilter(e.target.value)
           }}
+          onKeyDown={keyDownHandler.bind(null, filterRef.current!)}
         />
       </label>
     </>

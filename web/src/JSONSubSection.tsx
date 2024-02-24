@@ -1,18 +1,19 @@
 import JsonView from '@uiw/react-json-view'
 import { basicTheme } from '@uiw/react-json-view/basic'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { JSONViewerControls, JSONViewerSettings } from './JSONViewerControls'
 import { Prefix } from './Prefix'
 import { SubQueryResults } from './query-results'
 import { useScrollTo } from './useScrollTo'
-
 import { useMarker } from './useMarker'
+import { useFocus } from './useFocusState'
+
 export function JSONSubSection({
   section,
-  focused,
+  index,
 }: {
   section: SubQueryResults
-  focused: boolean
+  index: number
 }) {
   const [settings, setSettings] = useState<JSONViewerSettings>({
     collapsed: 1,
@@ -20,6 +21,15 @@ export function JSONSubSection({
     applyFilter: true,
   })
   const searchNodeRef = useRef<HTMLDivElement>(null)
+  const { registerSubSectionRef, focusedRow, setFocusedRow } = useFocus()
+  useEffect(() => {
+    if (searchNodeRef.current === null) {
+      return
+    }
+    registerSubSectionRef(searchNodeRef.current, index)
+  }, [index, registerSubSectionRef])
+  const focused = focusedRow === index
+
   useScrollTo({ focused, ref: searchNodeRef })
   useMarker({ searchNodeRef, settings })
 
@@ -48,7 +58,12 @@ export function JSONSubSection({
 
   return (
     <>
-      <div className={`output-line ${focused ? 'focused' : ''}`}>
+      <div
+        onClick={() => {
+          setFocusedRow(index)
+        }}
+        className={`output-line ${focused ? 'focused' : ''}`}
+      >
         <Prefix prefix={section.prefix} />
         <div
           style={{
@@ -62,7 +77,6 @@ export function JSONSubSection({
             }}
           >
             <JSONViewerControls
-              focused={focused}
               settings={settings}
               onChange={setSettings}
             />

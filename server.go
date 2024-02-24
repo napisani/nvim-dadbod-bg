@@ -12,7 +12,8 @@ import (
 
 var (
 	//go:embed web/dist/*
-	web embed.FS
+	web    embed.FS
+	server Server
 )
 
 type WebSocketRequest struct {
@@ -41,7 +42,7 @@ func handleWebSocketMessage(message []byte, conn *websocket.Conn) {
 	log.Println("Got message: \n", req)
 
 	if req.Action == "QUERY_RESULTS" {
-    log.Println("Sending query results")
+		log.Println("Sending query results")
 		queryResults := GetQueryResults()
 		if err = conn.WriteJSON(queryResults); err != nil {
 			log.Println(err)
@@ -56,7 +57,7 @@ func StartServer() {
 		panic(err)
 	}
 
-	server := Server{
+	server = Server{
 		clients: make(map[*websocket.Conn]bool),
 		dist:    dist,
 	}
@@ -91,10 +92,19 @@ func (server *Server) webSocketHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (server *Server) Broadcast(message []byte) {
+func (server *Server) broadcast(message []byte) {
 	for client := range server.clients {
 		if err := client.WriteMessage(websocket.TextMessage, message); err != nil {
 			log.Fatal("failed to broadcast message to websocket connections ", err)
+		}
+	}
+}
+
+func BroadcastQueryResults() {
+	queryResults := GetQueryResults()
+	for conn := range server.clients {
+		if err := conn.WriteJSON(queryResults); err != nil {
+			log.Println(err)
 		}
 	}
 }

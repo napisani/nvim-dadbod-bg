@@ -3,8 +3,10 @@ import { QueryResults } from './query-results'
 export const newlineRegex = /(\r|\n|\r\n)/g
 
 export function parseJsonSections(results: QueryResults) {
-  const re = /(^|\r|\n|\r\n)(.*>)/g
-  console.log('content', results.content)
+  // any string that starts with a newline or is the first content of the first line
+  // and is not enclosed in curly braces
+  // and ends with a > character
+  const re = /(^|\r|\n|\r\n)(?![^{}]*})(.*>)/g
   const contentSections = results.content
     .split(re)
     .reverse()
@@ -47,6 +49,5 @@ export function parseJsonSections(results: QueryResults) {
         }
       }
     })
-  console.log('contentSections', contentSections)
   return contentSections
 }

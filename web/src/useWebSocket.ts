@@ -7,13 +7,13 @@ export function useWebSocket() {
 
   function initWebSocket() {
     if (window.WebSocket === undefined) {
-      console.log('WebSocket is not supported')
+      console.error('WebSocket is not supported')
     }
     if (socket !== null) {
       console.log('WebSocket is already initialized')
       return
     }
-    console.log('Connecting to the server........')
+    //TOOO dynamically set the URL
     setSocket(new WebSocket('ws://localhost:7777/ws'))
   }
 
@@ -33,17 +33,17 @@ export function useWebSocket() {
       }
     }
     socket.onmessage = function (e) {
-      console.log(e.data)
-      console.log(JSON.parse(e.data))
       setQueryResults(JSON.parse(e.data))
-      console.log('Received query results')
     }
     socket.onerror = function (e) {
-      console.log('Error: ' + e)
+      console.error('WebSocket Error: ', e)
     }
     socket.onclose = function () {
-      console.log('Disconnected from the server')
+      console.log('WebSocket is closed')
       setSocket(null)
+      setTimeout(() => {
+        initWebSocket()
+      }, 5000)
     }
   }, [socket, queryResults])
 
