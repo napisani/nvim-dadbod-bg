@@ -1,0 +1,9 @@
+*.log
+nvim-dadbod-ext
+nvim-dadbod-exts
+/dist
+**/dist
+
+/node_modules
+**/node_modules
+
