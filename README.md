@@ -6,6 +6,9 @@
 Dadbod Beer Goggles is an addon/utility to be used with [vim-dadbod](https://github.com/tpope/vim-dadbod). Dadbod is a Vim plugin for interacting with databases. 
 Dadbod Beer Goggles is a remote neovim plugin that uses a webserver to display the results of a query in a browser. Beer Goggles can be used in conjunction with [vim-dadbod-ui](https://github.com/kristijanhusak/vim-dadbod-ui) as their features are complementary.
 
+### Screenshots
+![MongoDB example](/examples/mongo_example.png?raw=true "MongoDB example")
+
 ### Why
 
 Sometimes it can be hard to view the results of a query in a terminal. The results can be too wide, too long, or just too much to look at. 
