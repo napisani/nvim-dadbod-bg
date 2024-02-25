@@ -33,7 +33,7 @@ jobs:
       - name: webapp build npm install
         working-directory: web
         run: |
-          npm install
+          npm ci 
           npm run build
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
