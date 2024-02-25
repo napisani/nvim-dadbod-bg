@@ -12,7 +12,7 @@ builds:
       - CGO_ENABLED=0
 
     binary: nvim-dadbod-bg
-    main: ./main.go
+    main: .
 
     goos:
       - linux
