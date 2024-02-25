@@ -7,7 +7,6 @@ import (
 )
 
 type QueryResults struct {
-	//json or csv
 	Type    string `json:"type"`
 	Content string `json:"content"`
 }
@@ -18,9 +17,12 @@ func SetQueryResults(file string) {
 	var t string
 	if strings.HasSuffix(file, ".json") {
 		t = "json"
+	} else if strings.HasSuffix(file, ".dbout") {
+		t = "dbout"
 	} else {
-		t = "csv"
+		t = "txt"
 	}
+
 	content, err := ioutil.ReadFile(file)
 	if err != nil {
 		log.Fatal(err)
@@ -31,10 +33,4 @@ func SetQueryResults(file string) {
 
 func GetQueryResults() QueryResults {
 	return queryResults
-}
-
-// init module function
-func init() {
-  log.Println("init query-result.go")
-	SetQueryResults("/tmp/11.fix")
 }

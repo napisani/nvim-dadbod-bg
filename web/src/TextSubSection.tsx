@@ -4,10 +4,10 @@ import { TextViewerControls, TextViewerSettings } from './TextViewerControls'
 import { SubQueryResults } from './query-results'
 import { useScrollTo } from './useScrollTo'
 
-import { newlineRegex } from './json.util'
 import { useFocus } from './useFocusState'
-import { useMarker } from './useMarker'
 import { useGlobalSettings } from './useGlobalSettings'
+import { useMarker } from './useMarker'
+import { newlineRegex } from './utils'
 export function TextSubSection({
   section,
   index,

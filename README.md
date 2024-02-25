@@ -8,6 +8,7 @@ Dadbod Beer Goggles is a remote neovim plugin that uses a webserver to display t
 
 ### Screenshots
 ![MongoDB example](/examples/mongo_example.png?raw=true "MongoDB example")
+![Mysql example](/examples/mysql_example.png?raw=true "MySQL example")
 
 ### Why
 

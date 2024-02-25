@@ -13,8 +13,13 @@ export function useWebSocket() {
       console.log('WebSocket is already initialized')
       return
     }
-    const wsURL = `ws://${window.location.host}/ws`
 
+    const wsURL =
+      import.meta.env.MODE === 'development'
+        ? `ws://localhost:4546/ws`
+        : `ws://${window.location.host}/ws`
+
+    console.log('Connecting to WebSocket', wsURL)
     setSocket(new WebSocket(wsURL))
   }
 
@@ -34,6 +39,7 @@ export function useWebSocket() {
       }
     }
     socket.onmessage = function (e) {
+      console.log('Received message', e.data)
       setQueryResults(JSON.parse(e.data))
     }
     socket.onerror = function (e) {

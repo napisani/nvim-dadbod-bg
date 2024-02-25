@@ -1,16 +1,14 @@
-import JsonView from '@uiw/react-json-view'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { JSONViewerControls, JSONViewerSettings } from './JSONViewerControls'
 import { Prefix } from './Prefix'
-import { SubQueryResults } from './query-results'
+import { Table } from './Table'
+import { TableControls, TableSettings } from './TableControls'
+import { AttributeMap, SubQueryResults } from './query-results'
 import { useFocus } from './useFocusState'
 import { useGlobalSettings } from './useGlobalSettings'
 import { useMarker } from './useMarker'
 import { useScrollTo } from './useScrollTo'
 
-import { jsonViewerThemes } from './json.util'
-
-export function JSONSubSection({
+export function DBOutSubSection({
   section,
   index,
 }: {
@@ -18,7 +16,7 @@ export function JSONSubSection({
   index: number
 }) {
   const { globalSettings } = useGlobalSettings()
-  const [settings, setSettings] = useState<JSONViewerSettings>({
+  const [settings, setSettings] = useState<TableSettings>({
     collapsed: globalSettings.collapsed,
     theme: globalSettings.theme,
     filter: '',
@@ -35,10 +33,6 @@ export function JSONSubSection({
       applyFilter: globalSettings.applyFilter,
     })
   }, [globalSettings])
-
-  const theme = useMemo(() => {
-    return jsonViewerThemes[settings.theme] ?? jsonViewerThemes.basicTheme
-  }, [settings.theme])
 
   const searchNodeRef = useRef<HTMLDivElement>(null)
   const { registerSubSectionRef, focusedRow, setFocusedRow } = useFocus()
@@ -62,19 +56,23 @@ export function JSONSubSection({
       return section.content
     }
     return section.content.filter((item) => {
-      return JSON.stringify(item).includes(settings.filter!)
+      return Object.values(item).some((value) => {
+        return (value ?? '')
+          .toString()
+          .toLowerCase()
+          .includes(settings.filter!.toLowerCase())
+      })
     })
   }, [section.content, settings.filter, settings.applyFilter])
 
-  const jsonView = useMemo(() => {
+  const table = useMemo(() => {
     return (
-      <JsonView
-        style={theme}
-        collapsed={settings.collapsed}
-        value={filteredContent as object}
+      <Table
+        content={filteredContent as AttributeMap[]}
+        headers={section.header!}
       />
     )
-  }, [filteredContent, settings.collapsed, theme])
+  }, [filteredContent, section.header])
 
   return (
     <>
@@ -94,12 +92,18 @@ export function JSONSubSection({
             style={{
               display: 'flex',
               justifyContent: 'right',
-              marginTop: '0.5rem',
             }}
           >
-            <JSONViewerControls settings={settings} onChange={setSettings} />
+            <TableControls settings={settings} onChange={setSettings} />
           </div>
-          <div ref={searchNodeRef}>{jsonView}</div>
+          <div
+            style={{
+              marginTop: '0.5rem',
+            }}
+            ref={searchNodeRef}
+          >
+            {table}
+          </div>
         </div>
       </div>
     </>

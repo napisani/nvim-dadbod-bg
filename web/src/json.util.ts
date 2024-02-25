@@ -1,17 +1,18 @@
-import { QueryResults } from './query-results'
-import { lightTheme } from '@uiw/react-json-view/light'
-import { darkTheme } from '@uiw/react-json-view/dark'
-import { nordTheme } from '@uiw/react-json-view/nord'
-import { githubLightTheme } from '@uiw/react-json-view/githubLight'
-import { githubDarkTheme } from '@uiw/react-json-view/githubDark'
-import { vscodeTheme } from '@uiw/react-json-view/vscode'
-import { gruvboxTheme } from '@uiw/react-json-view/gruvbox'
-import { monokaiTheme } from '@uiw/react-json-view/monokai'
 import { basicTheme } from '@uiw/react-json-view/basic'
+import { darkTheme } from '@uiw/react-json-view/dark'
+import { githubDarkTheme } from '@uiw/react-json-view/githubDark'
+import { githubLightTheme } from '@uiw/react-json-view/githubLight'
+import { gruvboxTheme } from '@uiw/react-json-view/gruvbox'
+import { lightTheme } from '@uiw/react-json-view/light'
+import { monokaiTheme } from '@uiw/react-json-view/monokai'
+import { nordTheme } from '@uiw/react-json-view/nord'
+import { vscodeTheme } from '@uiw/react-json-view/vscode'
+import { QueryResults, SubQueryResults } from './query-results'
+import { HeaderAccumulator } from './utils'
 
-export const newlineRegex = /(\r|\n|\r\n)/g
-
-export function parseJsonSections(results: QueryResults) {
+export function parseJsonSections(
+  results: QueryResults
+): SubQueryResults[] {
   // any string that starts with a newline or is the first content of the first line
   // and is not enclosed in curly braces
   // and ends with a > character
@@ -44,11 +45,23 @@ export function parseJsonSections(results: QueryResults) {
     .filter((section) => section.line.trim() !== '')
     .map((section) => {
       try {
+        const headerAcc = new HeaderAccumulator({
+          inferTypes: true,
+        })
         const content = JSON.parse(section.line)
+        if (Array.isArray(content)) {
+          content.forEach((row) => {
+            headerAcc.inspectRow(row)
+          })
+        } else {
+          headerAcc.inspectRow(content)
+        }
+
         return {
           prefix: section.prefix,
           type: 'json',
           content,
+          header: headerAcc.toDataHeaders(),
         }
       } catch (e) {
         return {
