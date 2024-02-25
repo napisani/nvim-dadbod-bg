@@ -1,5 +1,5 @@
 # nvim-dadbod-beer-goggles (nvim-dadbod-bg)
-> Is it me, or is that DB looking pretty good?
+> is it me or is is that DB looking pretty good? 
 
 ### Intro
 
