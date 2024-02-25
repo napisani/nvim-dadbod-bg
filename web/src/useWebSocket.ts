@@ -13,8 +13,9 @@ export function useWebSocket() {
       console.log('WebSocket is already initialized')
       return
     }
-    //TOOO dynamically set the URL
-    setSocket(new WebSocket('ws://localhost:7777/ws'))
+    const wsURL = `ws://${window.location.host}/ws`
+
+    setSocket(new WebSocket(wsURL))
   }
 
   useEffect(() => {

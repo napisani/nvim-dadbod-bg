@@ -50,7 +50,7 @@ func handleWebSocketMessage(message []byte, conn *websocket.Conn) {
 	}
 }
 
-func StartServer() {
+func StartServer(port string) {
 	dist, err := fs.Sub(web, "web/dist")
 	if err != nil {
 		log.Fatal("Error reading dist folder", err)
@@ -64,8 +64,6 @@ func StartServer() {
 
 	http.Handle("/", http.FileServer(http.FS(dist)))
 	http.HandleFunc("/ws", server.webSocketHandler)
-
-	port := "7777"
 
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 

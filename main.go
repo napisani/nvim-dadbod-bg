@@ -37,8 +37,13 @@ func main() {
 			log.Print("File does not exist: " + filename)
 		}
 	}
+  port := os.Getenv("NVIM_DBBG_PORT")
+  if port == "" {
+    port = "4546"
+  }
 
-	go StartServer()
+
+	go StartServer(port)
 	plugin.Main(func(p *plugin.Plugin) error {
 		p.HandleAutocmd(&plugin.AutocmdOptions{Event: "User", Group: "ExmplNvGoClientGrp", Pattern: "*DBExecutePost", Eval: "*"},
 			func(eval *FileAutocmdEval) {

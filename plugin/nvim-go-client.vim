@@ -1,7 +1,7 @@
-if exists('g:loaded_nvim_dadbod_dadbod_bg')
+if exists('g:loaded_nvim_dadbod_bg')
     finish
 endif
-let g:loaded_nvim_dadbod_dadbod_bg = 1
+let g:loaded_nvim_dadbod_bg = 1
 
 " not every error the go-client runs into is logged. Some are printed
 " to stderr.  This routine captures that and prints it to messages;
@@ -18,10 +18,13 @@ endfunction
 " See :h msgpack-rpc and :h jobstart() for more information.
 let s:plugin_name = 'nvim-dadbod-bg'
 let s:plugin_root = fnamemodify(resolve(expand('<sfile>:p')), ':h:h')
+
+let s:port = get(g:, 'nvim_dadbod_bg_port', '4546')
 let s:plugin_cmd = [s:plugin_root . '/' . s:plugin_name]
 function! s:Sart_nvim_dadbog_bg(host) abort
     return jobstart(s:plugin_cmd, {
         \ 'rpc': v:true, 
+        \ 'env': {'NVIM_DBBG_PORT': s:port}, 
         \ 'on_stderr': function('s:panic')
         \ })
 endfunction
