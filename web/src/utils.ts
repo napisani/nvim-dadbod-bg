@@ -1,4 +1,9 @@
-import { AttributeMap, DataHeader, DataHeaders, DataType } from './query-results'
+import {
+  AttributeMap,
+  DataHeader,
+  DataHeaders,
+  DataType,
+} from './query-results'
 
 export const newlineRegex = /(\r|\n|\r\n)/g
 
@@ -64,18 +69,20 @@ export class HeaderAccumulator {
     }
   }
 
-
-  private evaluateInferredType(value: string) {
-    if (value === 'true' || value === 'false') {
+  private evaluateInferredType(value: any) {
+    if (typeof value === 'boolean' || value === 'true' || value === 'false') {
       return 'boolean'
     }
-    if (parseFloat(value)) {
+    if (typeof value === 'number' || parseFloat(value)) {
       return 'number'
     }
-    if (Date.parse(value)) {
+    if (value instanceof Date || Date.parse(value)) {
       return 'date'
     }
     try {
+      if (typeof value === 'object') {
+        return 'object'
+      }
       JSON.parse(value)
       return 'object'
     } catch (e) {
