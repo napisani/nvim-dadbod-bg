@@ -10,7 +10,7 @@ export interface TableSettings {
   collapsed: number | boolean
   filter: string
   applyFilter: boolean
-  theme: string
+  tableTheme: string
 }
 
 export function TableControls({ settings, onChange }: TableControlsProps) {
@@ -27,10 +27,7 @@ export function TableControls({ settings, onChange }: TableControlsProps) {
         setFilter={(filter) => {
           debouncedOnChange({ ...settings, filter })
         }}
-        applyFilter={settings.applyFilter}
-        setApplyFilter={(applyFilter) => {
-          onChange({ ...settings, applyFilter })
-        }}
+        hideApplyFilter={true}
       />
     </div>
   )

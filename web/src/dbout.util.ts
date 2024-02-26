@@ -57,3 +57,19 @@ export function parseDBOutSections(results: QueryResults): SubQueryResults[] {
   })
   return result
 }
+
+export const tableThemes = [
+  'ag-theme-quartz',
+  'ag-theme-quartz-auto',
+  'ag-theme-quartz-dark',
+  'ag-theme-quartz-auto-dark',
+  'ag-theme-alpine',
+  'ag-theme-alpine-auto',
+  'ag-theme-alpine-dark',
+  'ag-theme-alpine-auto-dark',
+  'ag-theme-balham',
+  'ag-theme-balham-auto',
+  'ag-theme-balham-dark',
+  'ag-theme-balham-auto-dark',
+  'ag-theme-material',
+]

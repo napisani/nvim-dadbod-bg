@@ -20,7 +20,7 @@ export function JSONSubSection({
   const { globalSettings } = useGlobalSettings()
   const [settings, setSettings] = useState<JSONViewerSettings>({
     collapsed: globalSettings.collapsed,
-    theme: globalSettings.theme,
+    jsonTheme: globalSettings.jsonTheme,
     filter: '',
     applyFilter: true,
   })
@@ -30,15 +30,15 @@ export function JSONSubSection({
       ...settings,
       // if the global settings change -- override the local settings with the global settings
       // so that you can see the changes made immediately. Then each section can have its own settings after that.
-      theme: globalSettings.theme,
+      jsonTheme: globalSettings.jsonTheme,
       collapsed: globalSettings.collapsed,
       applyFilter: globalSettings.applyFilter,
     })
   }, [globalSettings])
 
   const theme = useMemo(() => {
-    return jsonViewerThemes[settings.theme] ?? jsonViewerThemes.basicTheme
-  }, [settings.theme])
+    return jsonViewerThemes[settings.jsonTheme] ?? jsonViewerThemes.basicTheme
+  }, [settings.jsonTheme])
 
   const searchNodeRef = useRef<HTMLDivElement>(null)
   const { registerSubSectionRef, focusedRow, setFocusedRow } = useFocus()

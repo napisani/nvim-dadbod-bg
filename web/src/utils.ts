@@ -1,4 +1,4 @@
-import { AttributeMap, DataHeader, DataHeaders } from './query-results'
+import { AttributeMap, DataHeader, DataHeaders, DataType } from './query-results'
 
 export const newlineRegex = /(\r|\n|\r\n)/g
 
@@ -64,11 +64,12 @@ export class HeaderAccumulator {
     }
   }
 
+
   private evaluateInferredType(value: string) {
     if (value === 'true' || value === 'false') {
       return 'boolean'
     }
-    if (parseInt(value)) {
+    if (parseFloat(value)) {
       return 'number'
     }
     if (Date.parse(value)) {
@@ -105,4 +106,38 @@ export class HeaderAccumulator {
   toDataHeaders(): DataHeaders {
     return Object.values(this.headers)
   }
+}
+
+export function isDarkModeDefault() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+}
+
+export function parseByInferredType(value: any, inferredType: DataType) {
+  switch (inferredType) {
+    case 'number':
+      if (typeof value === 'number') {
+        return value
+      }
+      return parseFloat(value)
+    case 'boolean':
+      if (typeof value === 'boolean') {
+        return value
+      }
+      return value === 'true'
+    case 'date':
+      if (value instanceof Date) {
+        return value
+      }
+      return new Date(value)
+    case 'object':
+      if (typeof value === 'object') {
+        return value
+      }
+      try {
+        return JSON.parse(value)
+      } catch (e) {
+        return value?.toString()
+      }
+  }
+  return value ? value?.toString() : value
 }

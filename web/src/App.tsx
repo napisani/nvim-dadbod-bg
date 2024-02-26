@@ -31,14 +31,8 @@ function App() {
           ⚙️
         </button>
         <div>
-          {mode === 'GLOBAL_SETTINGS' && (
-            <GlobalSettings
-              onSave={() => {
-                setMode('RESULTS')
-              }}
-            />
-          )}
-          {mode === 'RESULTS' && (
+          {mode === 'GLOBAL_SETTINGS' && <GlobalSettings />}
+          {(mode === 'RESULTS' || mode === 'GLOBAL_SETTINGS') && (
             <FocusProvider>
               {queryResults && <Results results={queryResults} />}
             </FocusProvider>

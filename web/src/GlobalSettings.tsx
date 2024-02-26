@@ -1,13 +1,18 @@
 import { useState } from 'react'
-import { jsonViewerThemes } from './json.util'
-import { GloballyStoredSettings, useGlobalSettings } from './useGlobalSettings'
+import { tableThemes } from './dbout.util'
+import {
+  GloballyStoredSettings,
+  defaultGlobalSettings,
+  useGlobalSettings,
+} from './useGlobalSettings'
 import { booleanOrNumberToString, stringToBooleanOrNumber } from './utils'
+import { jsonViewerThemes } from './json.util'
 
 const labelStyle = {
   fontSize: 14,
 }
 
-export function GlobalSettings({ onSave }: { onSave: () => void }) {
+export function GlobalSettings({ onSave }: { onSave?: () => void }) {
   const { globalSettings, saveAndApplySettings } = useGlobalSettings()
   const [settings, setSettings] = useState<GloballyStoredSettings>({
     ...globalSettings,
@@ -15,7 +20,9 @@ export function GlobalSettings({ onSave }: { onSave: () => void }) {
 
   const handleSaveAndApply = (settings: GloballyStoredSettings) => {
     saveAndApplySettings(settings)
-    onSave()
+    if (onSave) {
+      onSave()
+    }
   }
 
   return (
@@ -55,11 +62,11 @@ export function GlobalSettings({ onSave }: { onSave: () => void }) {
           </div>
           <div>
             <select
-              value={settings.theme}
+              value={settings.jsonTheme}
               onChange={(e) => {
                 setSettings({
                   ...settings,
-                  theme: e.target.value,
+                  jsonTheme: e.target.value,
                 })
               }}
             >
@@ -74,6 +81,30 @@ export function GlobalSettings({ onSave }: { onSave: () => void }) {
                 })}
             </select>
           </div>
+
+          <div>
+            <label style={labelStyle}>Table theme</label>
+          </div>
+          <div>
+            <select
+              value={settings.tableTheme}
+              onChange={(e) => {
+                setSettings({
+                  ...settings,
+                  tableTheme: e.target.value,
+                })
+              }}
+            >
+              {tableThemes.sort().map((theme) => {
+                return (
+                  <option key={theme} value={theme}>
+                    {theme}
+                  </option>
+                )
+              })}
+            </select>
+          </div>
+
           <div>
             <label style={labelStyle}>Default apply filter:</label>
           </div>
@@ -94,12 +125,22 @@ export function GlobalSettings({ onSave }: { onSave: () => void }) {
             <button
               style={{
                 float: 'right',
+                margin: '4px',
               }}
               onClick={() => {
                 handleSaveAndApply(settings)
               }}
             >
               Save
+            </button>
+            <button
+              style={{
+                float: 'right',
+                margin: '4px',
+              }}
+              onClick={() => setSettings({ ...defaultGlobalSettings })}
+            >
+              Reset to default
             </button>
           </div>
         </div>

@@ -68,6 +68,7 @@ export function TextSubSection({
         style={{
           width: '100%',
           overflow: 'scroll',
+          marginTop: '0.5rem',
         }}
       >
         <div

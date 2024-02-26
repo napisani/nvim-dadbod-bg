@@ -11,7 +11,7 @@ export interface JSONViewerSettings {
   collapsed: number | boolean
   filter: string
   applyFilter: boolean
-  theme: string
+  jsonTheme: string
 }
 
 const labelStyle = {

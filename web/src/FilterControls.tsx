@@ -21,28 +21,34 @@ export function FilterControls({
   applyFilter,
   setApplyFilter,
   setFilter,
+  hideApplyFilter,
 }: {
   setFilter: (filter: string) => void
-  applyFilter: boolean
-  setApplyFilter: (applyFilter: boolean) => void
+  applyFilter?: boolean
+  setApplyFilter?: (applyFilter: boolean) => void
+  hideApplyFilter?: boolean
 }) {
   const filterRef = useRef<HTMLInputElement>(null)
   const checkboxRef = useRef<HTMLInputElement>(null)
   return (
     <>
-      <label style={labelStyle}>
-        Apply Filter:
-        <input
-          ref={checkboxRef}
-          style={{ marginLeft: 10 }}
-          type="checkbox"
-          checked={applyFilter}
-          onChange={(e) => {
-            setApplyFilter(e.target.checked)
-          }}
-          onKeyDown={keyDownHandler.bind(null, checkboxRef.current!)}
-        />
-      </label>
+      {!hideApplyFilter && (
+        <label style={labelStyle}>
+          Apply Filter:
+          <input
+            ref={checkboxRef}
+            style={{ marginLeft: 10 }}
+            type="checkbox"
+            checked={applyFilter}
+            onChange={(e) => {
+              if (setApplyFilter) {
+                setApplyFilter(e.target.checked)
+              }
+            }}
+            onKeyDown={keyDownHandler.bind(null, checkboxRef.current!)}
+          />
+        </label>
+      )}
 
       <label style={labelStyle}>
         Search:

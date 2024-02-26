@@ -5,7 +5,6 @@ import { TableControls, TableSettings } from './TableControls'
 import { AttributeMap, SubQueryResults } from './query-results'
 import { useFocus } from './useFocusState'
 import { useGlobalSettings } from './useGlobalSettings'
-import { useMarker } from './useMarker'
 import { useScrollTo } from './useScrollTo'
 
 export function DBOutSubSection({
@@ -18,7 +17,7 @@ export function DBOutSubSection({
   const { globalSettings } = useGlobalSettings()
   const [settings, setSettings] = useState<TableSettings>({
     collapsed: globalSettings.collapsed,
-    theme: globalSettings.theme,
+    tableTheme: globalSettings.tableTheme,
     filter: '',
     applyFilter: true,
   })
@@ -28,9 +27,8 @@ export function DBOutSubSection({
       ...settings,
       // if the global settings change -- override the local settings with the global settings
       // so that you can see the changes made immediately. Then each section can have its own settings after that.
-      theme: globalSettings.theme,
+      tableTheme: globalSettings.tableTheme,
       collapsed: globalSettings.collapsed,
-      applyFilter: globalSettings.applyFilter,
     })
   }, [globalSettings])
 
@@ -45,13 +43,11 @@ export function DBOutSubSection({
   const focused = focusedRow === index
 
   useScrollTo({ focused, ref: searchNodeRef })
-  useMarker({ searchNodeRef, settings })
 
   const filteredContent = useMemo(() => {
     if (
       (settings.filter ?? '').trim() === '' ||
-      !Array.isArray(section.content) ||
-      !settings.applyFilter
+      !Array.isArray(section.content)
     ) {
       return section.content
     }
@@ -63,16 +59,17 @@ export function DBOutSubSection({
           .includes(settings.filter!.toLowerCase())
       })
     })
-  }, [section.content, settings.filter, settings.applyFilter])
+  }, [section.content, settings.filter])
 
   const table = useMemo(() => {
     return (
       <Table
         content={filteredContent as AttributeMap[]}
         headers={section.header!}
+        settings={settings}
       />
     )
-  }, [filteredContent, section.header])
+  }, [filteredContent, section.header, settings])
 
   return (
     <>

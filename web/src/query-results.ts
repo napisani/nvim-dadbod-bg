@@ -9,7 +9,7 @@ export type AttributeMap = Record<string, any>
 
 export type DataHeader = {
   name: string
-  inferredType?: string
+  inferredType?: DataType
 }
 
 export type DataHeaders = DataHeader[]
