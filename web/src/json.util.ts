@@ -1,18 +1,45 @@
-import { basicTheme } from '@uiw/react-json-view/basic'
-import { darkTheme } from '@uiw/react-json-view/dark'
-import { githubDarkTheme } from '@uiw/react-json-view/githubDark'
-import { githubLightTheme } from '@uiw/react-json-view/githubLight'
-import { gruvboxTheme } from '@uiw/react-json-view/gruvbox'
-import { lightTheme } from '@uiw/react-json-view/light'
-import { monokaiTheme } from '@uiw/react-json-view/monokai'
-import { nordTheme } from '@uiw/react-json-view/nord'
-import { vscodeTheme } from '@uiw/react-json-view/vscode'
 import { QueryResults, SubQueryResults } from './query-results'
 import { HeaderAccumulator } from './utils'
+import {
+  apathy,
+  ashes,
+  atelierDune,
+  atelierForest,
+  atelierHeath,
+  atelierLakeside,
+  atelierSeaside,
+  bespin,
+  brewer,
+  bright,
+  chalk,
+  codeschool,
+  colors,
+  eighties,
+  embers,
+  flat,
+  google,
+  grayscale,
+  greenscreen,
+  harmonic,
+  hopscotch,
+  isotope,
+  marrakesh,
+  mocha,
+  monokai,
+  ocean,
+  paraiso,
+  pop,
+  railscasts,
+  shapeshifter,
+  solarized,
+  summerfruit,
+  threezerotwofour,
+  tomorrow,
+  tube,
+  twilight,
+} from 'base16'
 
-export function parseJsonSections(
-  results: QueryResults
-): SubQueryResults[] {
+export function parseJsonSections(results: QueryResults): SubQueryResults[] {
   // any string that starts with a newline or is the first content of the first line
   // and is not enclosed in curly braces
   // and ends with a > character
@@ -74,16 +101,41 @@ export function parseJsonSections(
   return contentSections
 }
 
-export const jsonViewerThemes: {
-  [key: string]: any
-} = {
-  lightTheme,
-  darkTheme,
-  nordTheme,
-  githubLightTheme,
-  githubDarkTheme,
-  vscodeTheme,
-  gruvboxTheme,
-  monokaiTheme,
-  basicTheme,
+export const jsonViewerThemes = {
+  apathy,
+  ashes,
+  atelierDune,
+  atelierForest,
+  atelierHeath,
+  atelierLakeside,
+  atelierSeaside,
+  bespin,
+  brewer,
+  bright,
+  chalk,
+  codeschool,
+  colors,
+  eighties,
+  embers,
+  flat,
+  google,
+  grayscale,
+  greenscreen,
+  harmonic,
+  hopscotch,
+  isotope,
+  marrakesh,
+  mocha,
+  monokai,
+  ocean,
+  paraiso,
+  pop,
+  railscasts,
+  shapeshifter,
+  solarized,
+  summerfruit,
+  threezerotwofour,
+  tomorrow,
+  tube,
+  twilight,
 }

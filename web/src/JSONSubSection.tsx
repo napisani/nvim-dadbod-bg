@@ -1,5 +1,5 @@
-import JsonView from '@uiw/react-json-view'
 import { useEffect, useMemo, useRef, useState } from 'react'
+
 import { JSONViewerControls, JSONViewerSettings } from './JSONViewerControls'
 import { Prefix } from './Prefix'
 import { SubQueryResults } from './query-results'
@@ -8,8 +8,10 @@ import { useGlobalSettings } from './useGlobalSettings'
 import { useMarker } from './useMarker'
 import { useScrollTo } from './useScrollTo'
 
+import { JSONTree, KeyPath } from 'react-json-tree'
 import { jsonViewerThemes } from './json.util'
 
+import { useJsonContentLimiter } from './useJsonContentLimiter'
 export function JSONSubSection({
   section,
   index,
@@ -66,15 +68,58 @@ export function JSONSubSection({
     })
   }, [section.content, settings.filter, settings.applyFilter])
 
+  const {
+    limitedContent: filteredAndLimitedContent,
+    containsLimitToken,
+    setLimitForKeyPath,
+    replaceLimitToken,
+  } = useJsonContentLimiter({
+    defaultLimit: 3,
+    content: filteredContent,
+  })
+
   const jsonView = useMemo(() => {
     return (
-      <JsonView
-        style={theme}
-        collapsed={settings.collapsed}
-        value={filteredContent as object}
-      />
+      <JSONTree
+        key={'json-viewer' + settings.collapsed.toString()}
+        theme={theme}
+        data={filteredAndLimitedContent}
+        shouldExpandNodeInitially={(_keyName, _data, level) => {
+          if (settings.collapsed === false) {
+            return true
+          } else if (settings.collapsed === true) {
+            return false
+          }
+          return level <= (settings.collapsed as number)
+        }}
+        labelRenderer={([key]: KeyPath) => {
+          return (
+            <strong>{containsLimitToken(key?.toString()) ? '' : key}</strong>
+          )
+        }}
+        valueRenderer={(raw, ...keyPath) => {
+          if (typeof raw === 'string' && containsLimitToken(raw)) {
+            return (
+              <button
+                onClick={() => {
+                  const path = keyPath.slice(2, -1).reverse()
+                  setLimitForKeyPath(path, 100)
+                }}
+              >
+                {replaceLimitToken(raw)}
+              </button>
+            )
+          }
+          return <em>{raw as any}</em>
+        }}
+      ></JSONTree>
     )
-  }, [filteredContent, settings.collapsed, theme])
+  }, [
+    filteredAndLimitedContent,
+    containsLimitToken,
+    setLimitForKeyPath,
+    settings,
+  ])
 
   return (
     <>

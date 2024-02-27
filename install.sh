@@ -1,14 +1,9 @@
 #!/usr/bin/env bash
 
 NPM_BIN=$(which npm)
-if [[ ! -x "$NPM_BIN" ]]; then
-  echo "npm is not installed - aborting install"
-  exit 1
-fi
-
 GO_BIN=$(which go)
 MAKE_BIN=$(which make)
-if [[ -x "$GO_BIN" && -x "${MAKE_BIN}" ]]; then
+if [[ -x "$GO_BIN" && -x "${MAKE_BIN}"  && -x "$NPM_BIN" ]]; then
 	echo "Go is installed - building from source"
 	make
 	exit 0

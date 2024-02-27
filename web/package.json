@@ -11,12 +11,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@uiw/react-json-view": "^2.0.0-alpha.12",
     "ag-grid-react": "^31.1.1",
+    "base16": "^1.0.0",
     "mark.js": "^8.11.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-highlight-words": "^0.20.0"
+    "react-highlight-words": "^0.20.0",
+    "react-json-tree": "^0.18.0"
   },
   "devDependencies": {
     "@types/mark.js": "^8.11.12",
