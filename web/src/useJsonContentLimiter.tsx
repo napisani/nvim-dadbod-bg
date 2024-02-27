@@ -66,7 +66,6 @@ export function useJsonContentLimiter({
     (keyPath: any[]): number => {
       const keyPathString = keyPathToString(keyPath)
       const limit = keyPathToLimit[keyPathString] ?? defaultLimit
-      console.log('limit ', keyPathString, limit)
       return limit
     },
     [keyPathToLimit, defaultLimit]
@@ -84,16 +83,30 @@ export function useJsonContentLimiter({
     [setKeyPathToLimit]
   )
 
+  const addToLimitForKeyPath = useCallback(
+    (keyPath: any[], addition: number) => {
+      setKeyPathToLimit((prev) => {
+        const keyPathString = keyPathToString(keyPath)
+        const limit = prev[keyPathString] ?? defaultLimit
+        return {
+          ...prev,
+          [keyPathString]: limit + addition,
+        }
+      })
+    },
+    [setKeyPathToLimit]
+  )
+
   const limitedContent = useMemo(
     () => limitContent([], content),
     [limitContent, content]
   )
-  console.log(keyPathToLimit, JSON.stringify(limitedContent, null, 2))
 
   return {
     setLimitForKeyPath,
     limitedContent,
     containsLimitToken,
     replaceLimitToken,
+    addToLimitForKeyPath,
   }
 }

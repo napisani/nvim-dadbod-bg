@@ -18,7 +18,7 @@ const storageKey = 'GLOBAL_SETTINGS'
 export const defaultGlobalSettings: GloballyStoredSettings = {
   collapsed: 2,
   applyFilter: true,
-  jsonTheme: isDarkModeDefault() ? 'basicTheme' : 'lightTheme',
+  jsonTheme: 'twilight',
   tableTheme: isDarkModeDefault()
     ? 'ag-theme-alpine-auto-dark'
     : 'ag-theme-alpine-auto',

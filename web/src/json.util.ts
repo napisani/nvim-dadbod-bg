@@ -101,7 +101,7 @@ export function parseJsonSections(results: QueryResults): SubQueryResults[] {
   return contentSections
 }
 
-export const jsonViewerThemes = {
+export const jsonViewerThemes: { [key: string]: any } = {
   apathy,
   ashes,
   atelierDune,

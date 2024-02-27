@@ -39,7 +39,7 @@ export function JSONSubSection({
   }, [globalSettings])
 
   const theme = useMemo(() => {
-    return jsonViewerThemes[settings.jsonTheme] ?? jsonViewerThemes.basicTheme
+    return jsonViewerThemes[settings.jsonTheme]
   }, [settings.jsonTheme])
 
   const searchNodeRef = useRef<HTMLDivElement>(null)
@@ -71,10 +71,10 @@ export function JSONSubSection({
   const {
     limitedContent: filteredAndLimitedContent,
     containsLimitToken,
-    setLimitForKeyPath,
+    addToLimitForKeyPath,
     replaceLimitToken,
   } = useJsonContentLimiter({
-    defaultLimit: 3,
+    defaultLimit: 20,
     content: filteredContent,
   })
 
@@ -103,10 +103,10 @@ export function JSONSubSection({
               <button
                 onClick={() => {
                   const path = keyPath.slice(2, -1).reverse()
-                  setLimitForKeyPath(path, 100)
+                  addToLimitForKeyPath(path, 20)
                 }}
               >
-                {replaceLimitToken(raw)}
+                {replaceLimitToken(raw).replace(/"/g, '')}
               </button>
             )
           }
@@ -117,7 +117,7 @@ export function JSONSubSection({
   }, [
     filteredAndLimitedContent,
     containsLimitToken,
-    setLimitForKeyPath,
+    addToLimitForKeyPath,
     settings,
   ])
 
