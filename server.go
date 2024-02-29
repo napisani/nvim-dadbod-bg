@@ -43,7 +43,7 @@ func handleWebSocketMessage(message []byte, conn *websocket.Conn) {
 
 	if req.Action == "QUERY_RESULTS" {
 		log.Println("Sending query results")
-		queryResults := GetQueryResults()
+		queryResults := GetRawQueryResults()
 		if err = conn.WriteJSON(queryResults); err != nil {
 			log.Println(err)
 		}
@@ -64,9 +64,32 @@ func StartServer(port string) {
 
 	http.Handle("/", http.FileServer(http.FS(dist)))
 	http.HandleFunc("/ws", server.webSocketHandler)
+	http.HandleFunc("/raw-query-results", server.rawQueryResultsHandler)
+	http.HandleFunc("/typed-query-results", server.typedQueryResultsHandler)
 
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 
+}
+
+func (server *Server) typedQueryResultsHandler(w http.ResponseWriter, r *http.Request) {
+  // allow all origins
+  w.Header().Set("Access-Control-Allow-Origin", "*")
+	queryResults, err := GetTypedQueryResults()
+	if err != nil {
+		log.Println("Error getting query results in typed format.", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error getting query results in typed format."))
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(queryResults)
+}
+
+func (server *Server) rawQueryResultsHandler(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Access-Control-Allow-Origin", "*")
+	queryResults := GetRawQueryResults()
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(queryResults)
 }
 
 func (server *Server) webSocketHandler(w http.ResponseWriter, r *http.Request) {
@@ -99,7 +122,7 @@ func (server *Server) broadcast(message []byte) {
 }
 
 func BroadcastQueryResults() {
-	queryResults := GetQueryResults()
+	queryResults := GetRawQueryResults()
 	for conn := range server.clients {
 		if err := conn.WriteJSON(queryResults); err != nil {
 			log.Println(err)

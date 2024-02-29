@@ -37,11 +37,10 @@ func main() {
 			log.Print("File does not exist: " + filename)
 		}
 	}
-  port := os.Getenv("NVIM_DBBG_PORT")
-  if port == "" {
-    port = "4546"
-  }
-
+	port := os.Getenv("NVIM_DBBG_PORT")
+	if port == "" {
+		port = "4546"
+	}
 
 	go StartServer(port)
 	plugin.Main(func(p *plugin.Plugin) error {

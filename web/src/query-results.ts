@@ -1,6 +1,11 @@
-export interface QueryResults {
+export interface RawQueryResults {
   type: string
   content: string
+}
+
+export interface TypedQueryResults {
+  type: string
+  content: SubQueryResults[]
 }
 
 export type DataType = 'string' | 'number' | 'boolean' | 'date' | 'object'

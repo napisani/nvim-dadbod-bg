@@ -1,4 +1,4 @@
-import { QueryResults, SubQueryResults } from './query-results'
+import { RawQueryResults, SubQueryResults } from './query-results'
 import { HeaderAccumulator } from './utils'
 import {
   apathy,
@@ -39,7 +39,7 @@ import {
   twilight,
 } from 'base16'
 
-export function parseJsonSections(results: QueryResults): SubQueryResults[] {
+export function parseJsonSections(results: RawQueryResults): SubQueryResults[] {
   // any string that starts with a newline or is the first content of the first line
   // and is not enclosed in curly braces
   // and ends with a > character

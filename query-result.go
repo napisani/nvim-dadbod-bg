@@ -1,17 +1,37 @@
 package main
 
 import (
+	"errors"
 	"io/ioutil"
 	"log"
 	"strings"
 )
 
-type QueryResults struct {
+type RawQueryResults struct {
 	Type    string `json:"type"`
 	Content string `json:"content"`
 }
 
-var queryResults QueryResults
+type SubQueryResults struct {
+	Prefix  string      `json:"prefix"`
+	Type    string      `json:"type"`
+	Content interface{} `json:"content"`
+	Header  DataHeaders `json:"header"`
+}
+
+type TypedQueryResults struct {
+	Type    string            `json:"type"`
+	Content []SubQueryResults `json:"content"`
+}
+
+type DataHeader struct {
+	Name         string
+	InferredType string
+}
+
+type DataHeaders []DataHeader
+
+var rawQueryResults RawQueryResults
 
 func SetQueryResults(file string) {
 	var t string
@@ -28,9 +48,24 @@ func SetQueryResults(file string) {
 		log.Fatal(err)
 	}
 
-	queryResults = QueryResults{t, string(content)}
+	rawQueryResults = RawQueryResults{t, string(content)}
 }
 
-func GetQueryResults() QueryResults {
-	return queryResults
+func GetRawQueryResults() RawQueryResults {
+	return rawQueryResults
+}
+
+func GetTypedQueryResults() (TypedQueryResults, error) {
+	content := rawQueryResults.Content
+	log.Println("Type", rawQueryResults.Type)
+	if rawQueryResults.Type == "json" {
+		log.Println("Parsing json")
+		subQueryResults := ParseJsonSubQueryResults(content)
+		log.Println("Parsed json successfully")
+		return TypedQueryResults{Type: "json", Content: subQueryResults}, nil
+	} else if rawQueryResults.Type == "dbout" {
+		return TypedQueryResults{Type: "dbout", Content: ParseDBOutSubQueryResults(content)}, nil
+	}
+	return TypedQueryResults{}, errors.New("Unknown type")
+
 }

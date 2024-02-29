@@ -1,28 +1,25 @@
-import { useMemo } from 'react'
 import { JSONSubSection } from './JSONSubSection'
-import { TextSubSection } from './TextSubSection'
-import { parseDBOutSections } from './dbout.util'
-import { parseJsonSections } from './json.util'
-import { QueryResults } from './query-results'
 import { DBOutSubSection } from './TableSubSection'
+import { TextSubSection } from './TextSubSection'
+import { TypedQueryResults } from './query-results'
 
-export function Results({ results }: { results: QueryResults }) {
-  const contentSections = useMemo(() => {
-    if (results.type === 'json') {
-      return parseJsonSections(results)
-    } else if (results.type === 'txt') {
-      // TODO
-    } else if (results.type === 'dbout') {
-      return parseDBOutSections(results)
-    }
-    return []
-  }, [results.content])
+export function Results({ results }: { results: TypedQueryResults }) {
+  // const contentSections = useMemo(() => {
+  //   if (results.type === 'json') {
+  //     return parseJsonSections(results)
+  //   } else if (results.type === 'txt') {
+  //     // TODO
+  //   } else if (results.type === 'dbout') {
+  //     return parseDBOutSections(results)
+  //   }
+  //   return []
+  // }, [results.content])
 
   return (
     <>
       <h1>Query results</h1>
       <div>
-        {contentSections.map((section, index) => {
+        {results.content.map((section, index) => {
           if (section.type === 'json') {
             return (
               <JSONSubSection key={index} index={index} section={section} />

@@ -1,9 +1,9 @@
-import { AttributeMap, QueryResults, SubQueryResults } from './query-results'
+import { AttributeMap, RawQueryResults, SubQueryResults } from './query-results'
 import { HeaderAccumulator } from './utils'
 
 // eslint-disable-next-line no-useless-escape
 const newlineRegex = /[\||\+][\r|\n|\r\n]/g
-export function parseDBOutSections(results: QueryResults): SubQueryResults[] {
+export function parseDBOutSections(results: RawQueryResults): SubQueryResults[] {
   const lines = results.content.split(newlineRegex)
   const sections = []
   let currentSection = []

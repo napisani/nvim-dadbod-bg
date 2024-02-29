@@ -1,8 +1,19 @@
 import { useEffect, useState } from 'react'
-import { QueryResults } from './query-results'
+import { RawQueryResults, TypedQueryResults } from './query-results'
 
-export function useWebSocket() {
-  const [queryResults, setQueryResults] = useState<QueryResults | null>(null)
+const apiURL =
+  import.meta.env.MODE === 'development'
+    ? `http://localhost:4546`
+    : `http://${window.location.host}`
+const wsURL =
+  import.meta.env.MODE === 'development'
+    ? `ws://localhost:4546/ws`
+    : `ws://${window.location.host}/ws`
+
+export function useApi() {
+  const [queryResults, setQueryResults] = useState<TypedQueryResults | null>(
+    null
+  )
   const [socket, setSocket] = useState<WebSocket | null>(null)
 
   function initWebSocket() {
@@ -13,11 +24,6 @@ export function useWebSocket() {
       console.log('WebSocket is already initialized')
       return
     }
-
-    const wsURL =
-      import.meta.env.MODE === 'development'
-        ? `ws://localhost:4546/ws`
-        : `ws://${window.location.host}/ws`
 
     console.log('Connecting to WebSocket', wsURL)
     setSocket(new WebSocket(wsURL))
@@ -38,9 +44,10 @@ export function useWebSocket() {
         socket?.send(JSON.stringify({ action: 'QUERY_RESULTS' }))
       }
     }
-    socket.onmessage = function (e) {
-      console.log('Received message', e.data)
-      setQueryResults(JSON.parse(e.data))
+    socket.onmessage = async function () {
+      const results = await requestTypedQueryResults()
+      setQueryResults(results)
+      // setQueryResults(JSON.parse(e.data))
     }
     socket.onerror = function (e) {
       console.error('WebSocket Error: ', e)
@@ -54,15 +61,22 @@ export function useWebSocket() {
     }
   }, [socket, queryResults])
 
-  async function requestQueryResults() {
-    if (socket === null) {
-      throw new Error('Socket is not initialized')
-    }
+  async function requestTypedQueryResults(): Promise<TypedQueryResults> {
+    const response = await fetch(`${apiURL}/typed-query-results`)
+    const data = await response.json()
+    console.log('Typed query results:', data)
+    return data
+  }
+  async function requestRawQueryResults(): Promise<RawQueryResults> {
+    const response = await fetch(`${apiURL}/raw-query-results`)
+    const data = await response.json()
+    return data
   }
 
   return {
     initWebSocket,
     queryResults,
-    requestQueryResults,
+    requestTypedQueryResults,
+    requestRawQueryResults,
   }
 }

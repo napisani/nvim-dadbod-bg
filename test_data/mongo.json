@@ -1,0 +1,37 @@
+Enterprise rs-localdev [direct: primary] test> 
+Enterprise rs-localdev [direct: primary] test> switched to db mongo_test
+Enterprise rs-localdev [direct: primary] mongo_test> 
+Enterprise rs-localdev [direct: primary] mongo_test> 
+Enterprise rs-localdev [direct: primary] mongo_test> 
+Enterprise rs-localdev [direct: primary] mongo_test> [
+  {
+    _id: ObjectId("65dfdd30dc55cc0daa1cfb76"),
+    name: 'Product 1',
+    price: 10
+  },
+  {
+    _id: ObjectId("65dfdd30dc55cc0daa1cfb77"),
+    name: 'Product 2',
+    price: 20
+  },
+  {
+    _id: ObjectId("65dfdd30dc55cc0daa1cfb78"),
+    name: 'Product 3',
+    price: 30
+  }
+]
+Enterprise rs-localdev [direct: primary] mongo_test> [
+  {
+    _id: ObjectId("65dfdd30dc55cc0daa1cfb74"),
+    name: 'John Doe',
+    age: 25,
+    email: 'johndoe@example.com'
+  },
+  {
+    _id: ObjectId("65dfdd30dc55cc0daa1cfb75"),
+    name: 'Jane Smith',
+    age: 30,
+    email: 'janesmith@example.com'
+  }
+]
+Enterprise rs-localdev [direct: primary] mongo_test> 
