@@ -34,15 +34,14 @@
       devShells.default = node_dep.mkShell {
         packages = [
           node_dep.nodejs_20
-# TODO
-          #golang_dep.go_1_22
-          #golang_dep.gotools
-          #goreleaser_dep.goreleaser
+          golang_dep.go_1_22
+          golang_dep.gotools
+          goreleaser_dep.goreleaser
         ];
 
         shellHook = ''
           echo "node version: $(node --version)"
-          #echo "go version: $(go version)"
+          echo "go version: $(go version)"
 
         '';
       };

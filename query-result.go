@@ -25,8 +25,8 @@ type TypedQueryResults struct {
 }
 
 type DataHeader struct {
-	Name         string
-	InferredType string
+	Name         string `json:"name"`
+	InferredType string `json:"inferredType"`
 }
 
 type DataHeaders []DataHeader

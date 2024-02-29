@@ -63,6 +63,7 @@ export function DBOutSubSection({
   }, [section.content, settings.filter])
 
   const table = useMemo(() => {
+    console.log('DBOutSubSection table', filteredContent)
     return (
       <Table
         content={filteredContent as AttributeMap[]}

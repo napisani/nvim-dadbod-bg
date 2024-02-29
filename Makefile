@@ -6,6 +6,9 @@ buildweb:
 buildgo:
 	go build -o nvim-dadbod-bg .
 
+testgo:
+	go test -v ./...
+
 manifest:
 	./nvim-dadbod-bg -manifest nvim_dadbod_bg
 
