@@ -34,6 +34,7 @@
       devShells.default = node_dep.mkShell {
         packages = [
           node_dep.nodejs_20
+# TODO
           #golang_dep.go_1_22
           #golang_dep.gotools
           #goreleaser_dep.goreleaser

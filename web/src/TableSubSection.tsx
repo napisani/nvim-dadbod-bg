@@ -14,6 +14,7 @@ export function DBOutSubSection({
   section: SubQueryResults
   index: number
 }) {
+  console.log('DBOutSubSection', section)
   const { globalSettings } = useGlobalSettings()
   const [settings, setSettings] = useState<TableSettings>({
     collapsed: globalSettings.collapsed,

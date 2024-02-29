@@ -39,6 +39,7 @@ import {
   twilight,
 } from 'base16'
 
+// TODO cleanup dead code
 export function parseJsonSections(results: RawQueryResults): SubQueryResults[] {
   // any string that starts with a newline or is the first content of the first line
   // and is not enclosed in curly braces
