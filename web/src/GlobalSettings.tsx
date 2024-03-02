@@ -164,6 +164,7 @@ export function GlobalSettings({ onSave }: { onSave?: () => void }) {
               }}
             />
           </div>
+
           <div>
             <label style={labelStyle}>Grid cell height (px):</label>
           </div>
@@ -181,7 +182,21 @@ export function GlobalSettings({ onSave }: { onSave?: () => void }) {
               }}
             />
           </div>
-
+          <div>
+            <label style={labelStyle}>Enable focus jump:</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              checked={settings.enableFocusJump}
+              onChange={(e) => {
+                setSettings({
+                  ...settings,
+                  enableFocusJump: e.target.checked,
+                })
+              }}
+            />
+          </div>
           <div></div>
           <div>
             <button

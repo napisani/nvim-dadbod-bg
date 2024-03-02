@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/gorilla/websocket"
 )
@@ -28,6 +29,7 @@ var upgrader = websocket.Upgrader{
 
 type Server struct {
 	clients map[*websocket.Conn]bool
+  rwMutex sync.RWMutex
 	dist    fs.FS
 }
 
@@ -40,12 +42,11 @@ func handleWebSocketMessage(message []byte, conn *websocket.Conn) {
 	}
 
 	log.Println("Got message: \n", req)
-
 	if req.Action == "QUERY_RESULTS" {
 		log.Println("Sending query results")
 		queryResults := GetRawQueryResults()
 		if err = conn.WriteJSON(queryResults); err != nil {
-			log.Println(err)
+			log.Println("error sending query results over web socket: ", err)
 		}
 	}
 }
@@ -72,8 +73,8 @@ func StartServer(port string) {
 }
 
 func (server *Server) typedQueryResultsHandler(w http.ResponseWriter, r *http.Request) {
-  // allow all origins
-  w.Header().Set("Access-Control-Allow-Origin", "*")
+	// allow all origins
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	queryResults, err := GetTypedQueryResults()
 	if err != nil {
 		log.Println("Error getting query results in typed format.", err)
@@ -86,7 +87,7 @@ func (server *Server) typedQueryResultsHandler(w http.ResponseWriter, r *http.Re
 }
 
 func (server *Server) rawQueryResultsHandler(w http.ResponseWriter, r *http.Request) {
-  w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	queryResults := GetRawQueryResults()
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(queryResults)
@@ -99,8 +100,16 @@ func (server *Server) webSocketHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer connection.Close()
+	server.rwMutex.Lock()
 	server.clients[connection] = true
-	defer delete(server.clients, connection)
+	server.rwMutex.Unlock()
+
+	cleanUp := func() {
+		server.rwMutex.Lock()
+		delete(server.clients, connection)
+		server.rwMutex.Unlock()
+	}
+	defer cleanUp()
 
 	for {
 		mt, message, err := connection.ReadMessage()
@@ -123,9 +132,10 @@ func (server *Server) broadcast(message []byte) {
 
 func BroadcastQueryResults() {
 	queryResults := GetRawQueryResults()
+	notification := NewQueryResultsNotification{ParsedAt: queryResults.ParsedAt}
 	for conn := range server.clients {
-		if err := conn.WriteJSON(queryResults); err != nil {
-			log.Println(err)
+		if err := conn.WriteJSON(notification); err != nil {
+			log.Println("error broadcasting message: ", notification, err)
 		}
 	}
 }

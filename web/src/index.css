@@ -12,31 +12,34 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* @media (prefers-color-scheme: light) { */
-/*   :root { */
-/*     color: #213547; */
-/*     background-color: #ffffff; */
-/*   } */
-/*   a:hover { */
-/*     color: #747bff; */
-/*   } */
-/*   button { */
-/*     background-color: #f9f9f9; */
-/*   } */
-/* } */
+.socket-connected {
+  font-size: 1.5rem;
+  height: .8rem;
+  width: .8rem; 
+  background-color: limegreen; 
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid orange; 
+}
+
+.socket-disconnected {
+  font-size: 1.5rem;
+  height: .8rem;
+  width: .8rem; 
+  background-color: red; 
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid orange; 
+}
 
 .output-container {
   display: grid;
-
-  /* flex-direction: row; */ 
-  /* flex-wrap: wrap; */
   gap: .5rem;
   margin: 0.5rem;
 }
 
 
 .output-line {
-  /* flex: 1 1 auto; */ 
   margin: 0.5rem 0;
   padding: 0.5rem;
   border-radius: 0.5rem;
@@ -46,6 +49,14 @@
   font-weight: 500;
   box-shadow: 0 0 0.5rem 0.1rem rgba(0, 0, 0, 0.1);
   margin-top: 0; /* Added to remove top margin */
+}
+
+.updated-pill {
+  color: #747bff;
+  background-color: #2d2d2d;
+  padding: 5px 10px; 
+  font-size: .7em;
+  border-radius: 20px; 
 }
 
 .output-line.focused {

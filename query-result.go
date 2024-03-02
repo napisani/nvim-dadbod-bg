@@ -5,11 +5,17 @@ import (
 	"io/ioutil"
 	"log"
 	"strings"
+	"time"
 )
 
+type NewQueryResultsNotification struct {
+	ParsedAt int64 `json:"parsedAt"`
+}
+
 type RawQueryResults struct {
-	Type    string `json:"type"`
-	Content string `json:"content"`
+	Type     string `json:"type"`
+	Content  string `json:"content"`
+	ParsedAt int64  `json:"parsedAt"`
 }
 
 type SubQueryResults struct {
@@ -20,8 +26,9 @@ type SubQueryResults struct {
 }
 
 type TypedQueryResults struct {
-	Type    string            `json:"type"`
-	Content []SubQueryResults `json:"content"`
+	Type     string            `json:"type"`
+	Content  []SubQueryResults `json:"content"`
+	ParsedAt int64             `json:"parsedAt"`
 }
 
 type DataHeader struct {
@@ -48,7 +55,11 @@ func SetQueryResults(file string) {
 		log.Fatal(err)
 	}
 
-	rawQueryResults = RawQueryResults{t, string(content)}
+	rawQueryResults = RawQueryResults{
+		t,
+		string(content),
+		time.Now().Unix(),
+	}
 }
 
 func GetRawQueryResults() RawQueryResults {
@@ -62,10 +73,15 @@ func GetTypedQueryResults() (TypedQueryResults, error) {
 		log.Println("Parsing json")
 		subQueryResults := ParseJsonSubQueryResults(content)
 		log.Println("Parsed json successfully")
-		return TypedQueryResults{Type: "json", Content: subQueryResults}, nil
+		return TypedQueryResults{Type: "json", Content: subQueryResults, ParsedAt: rawQueryResults.ParsedAt}, nil
 	} else if rawQueryResults.Type == "dbout" {
-		return TypedQueryResults{Type: "dbout", Content: ParseDBOutSubQueryResults(content)}, nil
+		log.Println("Parsing dbout")
+		subQueryResults := ParseDBOutSubQueryResults(content)
+		log.Println("Parsed dbout successfully")
+		return TypedQueryResults{Type: "dbout", 
+      Content: subQueryResults, ParsedAt: rawQueryResults.ParsedAt}, nil
 	}
+
 	return TypedQueryResults{}, errors.New("Unknown type")
 
 }

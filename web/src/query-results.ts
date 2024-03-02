@@ -1,11 +1,15 @@
 export interface RawQueryResults {
   type: OutputType
   content: string
+  parsedAt: number
+  receivedAt: number
 }
 
 export interface TypedQueryResults {
   type: OutputType
   content: SubQueryResults[]
+  parsedAt: number
+  receivedAt: number
 }
 
 export type OutputType = 'json' | 'dbout'

@@ -2,13 +2,20 @@ import { useState } from 'react'
 import { JSONSubSection } from './JSONSubSection'
 import { DBOutSubSection } from './TableSubSection'
 import { TextSubSection } from './TextSubSection'
-import { TypedQueryResults } from './query-results'
+import { OutputType, TypedQueryResults } from './query-results'
 import { useGlobalSettings } from './useGlobalSettings'
 
-export function Results({ results }: { results: TypedQueryResults }) {
+import { StatusPill } from './StatusPill'
+export function Results({
+  results,
+  webSocketStatus,
+}: {
+  webSocketStatus: string
+  results?: TypedQueryResults | null
+}) {
   const { globalSettings } = useGlobalSettings()
   const [displayType, setDisplayType] = useState<{
-    [idx: number]: 'dbout' | 'json'
+    [idx: number]: OutputType
   }>({})
 
   return (
@@ -16,9 +23,15 @@ export function Results({ results }: { results: TypedQueryResults }) {
       <h1
         style={{
           margin: '.5rem',
+          paddingBottom: '.5rem',
         }}
       >
-        Query results
+        Query results updated:{' '}
+        <StatusPill
+          parsedAt={results?.parsedAt}
+          receivedAt={results?.receivedAt}
+          webSocketStatus={webSocketStatus}
+        />
       </h1>
       <div
         className="output-container"
@@ -26,7 +39,7 @@ export function Results({ results }: { results: TypedQueryResults }) {
           gridTemplateColumns: `repeat(${globalSettings.gridCellsPerRow}, 1fr)`,
         }}
       >
-        {results.content.map((section, index) => {
+        {results?.content.map((section, index) => {
           const type = displayType[index] ?? section.type
           if (type === 'json') {
             return (

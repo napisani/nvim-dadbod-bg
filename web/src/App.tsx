@@ -3,11 +3,11 @@ import { GlobalSettings } from './GlobalSettings'
 import { Results } from './Results'
 import { FocusProvider } from './useFocusState'
 import { GlobalSettingProvider } from './useGlobalSettings'
-import { useApi } from './useWebSocket'
+import { useApi } from './useApi'
 import { useState } from 'react'
 type Modes = 'GLOBAL_SETTINGS' | 'RESULTS'
 function App() {
-  const { queryResults } = useApi()
+  const { queryResults, webSocketStatus } = useApi()
   const [mode, setMode] = useState<Modes>('RESULTS')
 
   return (
@@ -32,7 +32,10 @@ function App() {
           {mode === 'GLOBAL_SETTINGS' && <GlobalSettings />}
           {(mode === 'RESULTS' || mode === 'GLOBAL_SETTINGS') && (
             <FocusProvider>
-              {queryResults && <Results results={queryResults} />}
+              <Results
+                webSocketStatus={webSocketStatus}
+                results={queryResults}
+              />
             </FocusProvider>
           )}
         </div>

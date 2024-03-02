@@ -15,18 +15,26 @@ export function useApi() {
     null
   )
   const [socket, setSocket] = useState<WebSocket | null>(null)
+  const [webSocketStatus, setWebSocketStatus] = useState<
+    'connected' | 'disconnected'
+  >('disconnected')
 
-  function initWebSocket() {
+  async function initWebSocket(force = false) {
     if (window.WebSocket === undefined) {
       console.error('WebSocket is not supported')
     }
     if (socket !== null) {
-      console.log('WebSocket is already initialized')
-      return
+      if (force) {
+        console.log('WebSocket is already initialized, closing')
+      } else {
+        console.log('WebSocket is already initialized')
+        return
+      }
     }
 
     console.log('Connecting to WebSocket', wsURL)
-    setSocket(new WebSocket(wsURL))
+    const s = new WebSocket(wsURL)
+    setSocket(s)
   }
 
   useEffect(() => {
@@ -37,46 +45,56 @@ export function useApi() {
     if (socket === null) {
       return
     }
-    socket.onopen = function () {
+    socket.onopen = async function () {
       console.log('Connected to the server')
       if (queryResults === null) {
-        console.log('Requesting query results')
-        socket?.send(JSON.stringify({ action: 'QUERY_RESULTS' }))
+        const results = await requestTypedQueryResults()
+        setQueryResults(results)
       }
+      setWebSocketStatus('connected')
     }
     socket.onmessage = async function () {
       const results = await requestTypedQueryResults()
       setQueryResults(results)
-      // setQueryResults(JSON.parse(e.data))
     }
     socket.onerror = function (e) {
-      console.error('WebSocket Error: ', e)
+      console.error('WebSocket error', e)
+      if (socket !== null) {
+        socket.close()
+        return
+      }
+      setWebSocketStatus('disconnected')
     }
     socket.onclose = function () {
       console.log('WebSocket is closed')
-      setSocket(null)
-      setTimeout(() => {
-        initWebSocket()
-      }, 5000)
+      setWebSocketStatus('disconnected')
+      initWebSocket(true)
     }
   }, [socket, queryResults])
 
   async function requestTypedQueryResults(): Promise<TypedQueryResults> {
     const response = await fetch(`${apiURL}/typed-query-results`)
     const data = await response.json()
-    console.log('Typed query results:', data)
-    return data
+    return {
+      ...data,
+      receivedAt: Math.round(new Date().getTime() / 1000),
+    }
   }
   async function requestRawQueryResults(): Promise<RawQueryResults> {
     const response = await fetch(`${apiURL}/raw-query-results`)
     const data = await response.json()
-    return data
+    return {
+      ...data,
+      receivedAt: Math.round(new Date().getTime() / 1000),
+    }
   }
 
+  console.log('webSocketStatus', webSocketStatus)
   return {
     initWebSocket,
     queryResults,
     requestTypedQueryResults,
     requestRawQueryResults,
+    webSocketStatus,
   }
 }

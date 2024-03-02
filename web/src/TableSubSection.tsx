@@ -17,7 +17,6 @@ export function DBOutSubSection({
   index,
   setDisplayType,
 }: TableSubSectionProps) {
-  console.log('DBOutSubSection', section)
   const { globalSettings } = useGlobalSettings()
   const [settings, setSettings] = useState<TableSettings>({
     collapsed: globalSettings.collapsed,
@@ -67,7 +66,6 @@ export function DBOutSubSection({
   }, [section.content, settings.filter])
 
   const table = useMemo(() => {
-    console.log('DBOutSubSection table', filteredContent)
     return (
       <Table
         content={filteredContent as AttributeMap[]}

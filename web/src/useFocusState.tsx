@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { useGlobalSettings } from './useGlobalSettings'
 
 export interface FocusContextProps {
   focusedRow: number | null
@@ -12,26 +13,31 @@ const FocusContext = createContext<FocusContextProps>({
 })
 
 export const FocusProvider = ({ children }: { children: React.ReactNode }) => {
+  const { globalSettings } = useGlobalSettings()
   const [focusedRow, setFocusedRow] = useState<number | null>(null)
   const subSectionRefs = useRef<HTMLDivElement[]>([])
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement) {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.target instanceof HTMLInputElement) {
         // don't hijack input fields
         return
       }
       const row = focusedRow
       const len = subSectionRefs.current.length
-      if (e.key === 'j') {
-        e.preventDefault()
+      if (event.key === 'j') {
+        event.preventDefault()
         setFocusedRow(row === null ? 0 : (row + 1) % len)
-      } else if (e.key === 'k') {
-        e.preventDefault()
+      } else if (event.key === 'k') {
+        event.preventDefault()
         setFocusedRow(row === null ? 0 : (row - 1) % len)
-      } else if (e.key === 'Tab' || e.key === '/') {
-        e.preventDefault()
-        if (row !== null && row !== undefined) {
+      } else if (event.key === 'Tab' || event.key === '/') {
+        event.preventDefault()
+        if (
+          row !== null &&
+          row !== undefined &&
+          globalSettings.enableFocusJump
+        ) {
           const focusedSubSection = subSectionRefs.current[row].parentElement
           const focusableElements =
             focusedSubSection?.querySelectorAll('.filter-input') ?? []

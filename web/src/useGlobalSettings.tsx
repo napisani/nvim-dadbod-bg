@@ -14,6 +14,7 @@ export interface GloballyStoredSettings {
   showMoreAmount: number
   gridCellsPerRow: number
   gridCellHeightPx: number
+  enableFocusJump: boolean
 }
 
 const storageKey = 'GLOBAL_SETTINGS'
@@ -25,6 +26,7 @@ export const defaultGlobalSettings: GloballyStoredSettings = {
   gridCellsPerRow: 1,
   gridCellHeightPx: 400,
   jsonTheme: 'twilight',
+  enableFocusJump: true,
   tableTheme: isDarkModeDefault()
     ? 'ag-theme-alpine-auto-dark'
     : 'ag-theme-alpine-auto',
