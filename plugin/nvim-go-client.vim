@@ -20,11 +20,12 @@ let s:plugin_name = 'nvim-dadbod-bg'
 let s:plugin_root = fnamemodify(resolve(expand('<sfile>:p')), ':h:h')
 
 let s:port = get(g:, 'nvim_dadbod_bg_port', '4546')
+let s:ui_root = get(g:, 'nvim_dadbod_bg_ui_root_dir', '')
 let s:plugin_cmd = [s:plugin_root . '/' . s:plugin_name]
 function! s:Sart_nvim_dadbog_bg(host) abort
     return jobstart(s:plugin_cmd, {
         \ 'rpc': v:true, 
-        \ 'env': {'NVIM_DBBG_PORT': s:port}, 
+        \ 'env': {'NVIM_DBBG_PORT': s:port, 'NVIM_DBBG_UI_ROOT_DIR': s:ui_root}, 
         \ 'on_stderr': function('s:panic')
         \ })
 endfunction

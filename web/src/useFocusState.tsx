@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
-import { useGlobalSettings } from './useGlobalSettings'
 
 export interface FocusContextProps {
   focusedRow: number | null
@@ -13,7 +12,6 @@ const FocusContext = createContext<FocusContextProps>({
 })
 
 export const FocusProvider = ({ children }: { children: React.ReactNode }) => {
-  const { globalSettings } = useGlobalSettings()
   const [focusedRow, setFocusedRow] = useState<number | null>(null)
   const subSectionRefs = useRef<HTMLDivElement[]>([])
 
@@ -33,11 +31,7 @@ export const FocusProvider = ({ children }: { children: React.ReactNode }) => {
         setFocusedRow(row === null ? 0 : (row - 1) % len)
       } else if (event.key === 'Tab' || event.key === '/') {
         event.preventDefault()
-        if (
-          row !== null &&
-          row !== undefined &&
-          globalSettings.enableFocusJump
-        ) {
+        if (row !== null && row !== undefined) {
           const focusedSubSection = subSectionRefs.current[row].parentElement
           const focusableElements =
             focusedSubSection?.querySelectorAll('.filter-input') ?? []

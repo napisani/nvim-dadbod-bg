@@ -39,7 +39,7 @@ export function useApi() {
 
   useEffect(() => {
     initWebSocket()
-  })
+  }, [])
 
   useEffect(() => {
     if (socket === null) {
@@ -89,7 +89,6 @@ export function useApi() {
     }
   }
 
-  console.log('webSocketStatus', webSocketStatus)
   return {
     initWebSocket,
     queryResults,

@@ -1,10 +1,11 @@
+import { useState } from 'react'
 import './App.css'
 import { GlobalSettings } from './GlobalSettings'
 import { Results } from './Results'
+import { useApi } from './useApi'
 import { FocusProvider } from './useFocusState'
 import { GlobalSettingProvider } from './useGlobalSettings'
-import { useApi } from './useApi'
-import { useState } from 'react'
+import { Help } from './Help'
 type Modes = 'GLOBAL_SETTINGS' | 'RESULTS'
 function App() {
   const { queryResults, webSocketStatus } = useApi()
@@ -29,7 +30,24 @@ function App() {
           ⚙️
         </button>
         <div>
-          {mode === 'GLOBAL_SETTINGS' && <GlobalSettings />}
+          {mode === 'GLOBAL_SETTINGS' && (
+            <>
+              <div
+                style={{
+                  display: 'inline-block',
+                }}
+              >
+                <GlobalSettings />
+              </div>
+              <div
+                style={{
+                  display: 'inline-block',
+                }}
+              >
+                <Help />
+              </div>
+            </>
+          )}
           {(mode === 'RESULTS' || mode === 'GLOBAL_SETTINGS') && (
             <FocusProvider>
               <Results

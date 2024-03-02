@@ -46,8 +46,11 @@ export function GlobalSettings({ onSave }: { onSave?: () => void }) {
           }}
         >
           <div>
-            <label style={labelStyle}>
-              JSON Viewer - show &quot;more&quot; amount:
+            <label
+              title="The number of items to show when the user clicks the 'more' button in the JSON viewer"
+              style={labelStyle}
+            >
+              JSON Viewer - Show &quot;more&quot; amount:
             </label>
           </div>
           <div>
@@ -63,7 +66,12 @@ export function GlobalSettings({ onSave }: { onSave?: () => void }) {
             />
           </div>
           <div>
-            <label style={labelStyle}>JSON Viewer - default collapsed:</label>
+            <label
+              title="The number of levels to collapse by default in the JSON viewer"
+              style={labelStyle}
+            >
+              JSON Viewer - Default collapsed:
+            </label>
           </div>
           <div>
             <select
@@ -84,7 +92,12 @@ export function GlobalSettings({ onSave }: { onSave?: () => void }) {
             </select>
           </div>
           <div>
-            <label style={labelStyle}>JSON Viewer - Theme:</label>
+            <label
+              title="The theme to use for the JSON viewer"
+              style={labelStyle}
+            >
+              JSON Viewer - Theme:
+            </label>
           </div>
           <div>
             <select
@@ -109,7 +122,9 @@ export function GlobalSettings({ onSave }: { onSave?: () => void }) {
           </div>
 
           <div>
-            <label style={labelStyle}>Table theme</label>
+            <label title="The theme to use for the table" style={labelStyle}>
+              Table theme:
+            </label>
           </div>
           <div>
             <select
@@ -132,7 +147,12 @@ export function GlobalSettings({ onSave }: { onSave?: () => void }) {
           </div>
 
           <div>
-            <label style={labelStyle}>Default apply filter:</label>
+            <label
+              title="Whether to apply the filter to the query results by default (or just highlight the matches)"
+              style={labelStyle}
+            >
+              Default apply filter:
+            </label>
           </div>
           <div>
             <input
@@ -148,7 +168,12 @@ export function GlobalSettings({ onSave }: { onSave?: () => void }) {
           </div>
 
           <div>
-            <label style={labelStyle}>Grid cells per row:</label>
+            <label
+              title="The number of grid cells to show per row"
+              style={labelStyle}
+            >
+              Grid cells per row:
+            </label>
           </div>
           <div>
             <input
@@ -166,7 +191,12 @@ export function GlobalSettings({ onSave }: { onSave?: () => void }) {
           </div>
 
           <div>
-            <label style={labelStyle}>Grid cell height (px):</label>
+            <label
+              title="The height of each grid cell in pixels"
+              style={labelStyle}
+            >
+              Grid cell height (px):
+            </label>
           </div>
           <div>
             <input
@@ -183,7 +213,12 @@ export function GlobalSettings({ onSave }: { onSave?: () => void }) {
             />
           </div>
           <div>
-            <label style={labelStyle}>Enable focus jump:</label>
+            <label
+              title="Whether to enable scrolling to the next focusable element when pressing 'j' or 'k' in the results view."
+              style={labelStyle}
+            >
+              Enable focus jump:
+            </label>
           </div>
           <div>
             <input

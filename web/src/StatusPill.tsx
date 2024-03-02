@@ -28,7 +28,7 @@ export function StatusPill({
       <span
         key={renderKey}
         className="updated-pill"
-        title={`parsed: ${parsedAtTime}\n received: ${receivedAtTime}`}
+        title={`parsed: ${parsedAtTime}\nreceived: ${receivedAtTime}`}
       >
         {receivedAtTime}
         {webSocketStatus === 'connected' ? (

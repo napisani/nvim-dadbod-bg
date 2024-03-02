@@ -1,4 +1,5 @@
 import { RefObject, useCallback, useEffect } from 'react'
+import { useGlobalSettings } from './useGlobalSettings'
 
 export function useScrollTo({
   ref,
@@ -7,6 +8,7 @@ export function useScrollTo({
   ref: RefObject<HTMLDivElement>
   focused: boolean
 }) {
+  const { globalSettings } = useGlobalSettings()
   const scrollTo = useCallback(() => {
     ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     if (!ref.current) {
@@ -21,7 +23,7 @@ export function useScrollTo({
   }, [ref.current])
 
   useEffect(() => {
-    if (focused) {
+    if (focused && globalSettings.enableFocusJump) {
       scrollTo()
     }
   }, [focused, scrollTo])

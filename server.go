@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"os"
 	"sync"
 
 	"github.com/gorilla/websocket"
@@ -29,7 +30,7 @@ var upgrader = websocket.Upgrader{
 
 type Server struct {
 	clients map[*websocket.Conn]bool
-  rwMutex sync.RWMutex
+	rwMutex sync.RWMutex
 	dist    fs.FS
 }
 
@@ -51,11 +52,19 @@ func handleWebSocketMessage(message []byte, conn *websocket.Conn) {
 	}
 }
 
-func StartServer(port string) {
-	dist, err := fs.Sub(web, "web/dist")
-	if err != nil {
-		log.Fatal("Error reading dist folder", err)
-		panic(err)
+func StartServer(port string, altRootDir string) {
+	var dist fs.FS
+	var err error
+	if altRootDir == "" {
+		log.Println("Using default dist directory for web UI.")
+		dist, err = fs.Sub(web, "web/dist")
+		if err != nil {
+			log.Fatal("Error reading default dist folder", err)
+			panic(err)
+		}
+	} else {
+		log.Println("Using alternate dist directory for web UI.", altRootDir)
+		dist = os.DirFS(altRootDir)
 	}
 
 	server = Server{

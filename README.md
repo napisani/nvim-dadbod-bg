@@ -109,6 +109,94 @@ npm run dev
 # make changes to the webapp and see the changes in the browser
 ```
 
+### Bring-Your-Own-UI
+> Cool idea, but your UI kinda sucks...
+That's fine! Write your own friggen UI why don't ya!
+
+You can configure this plugin to use your own custom UI by setting the `g:nvim_dadbod_bg_ui` variable to the path of your custom UI.
+The path is relative to where `nvim-dadbod-bg` is installed (IE: `~/.local/share/nvim/site/pack/packer/start/nvim-dadbod-bg`) or an absolute path.
+
+The `g:nvim_dadbod_bg_ui` variable should point to a directory that contains an `index.html` (and any other necessary web assets), typically a `dist` directory produced by the `production` build of your custom UI application.
+
+Here is an example of configuring `nvim-dadbod-bg` to use a custom UI:
+
+```lua
+-- Packer
+use {
+    'napisani/nvim-dadbod-bg',
+    run = './install.sh',
+    -- (optional) the default port is 4546
+    config = function()
+      vim.cmd([[
+        let g:nvim_dadbod_bg_port = '4546'
+        let g:nvim_dadbod_bg_ui_root_dir = '/home/user/my-awesome-dadbod-ui/dist'
+      ]])
+    end
+}
+```
+
+### API Specification
+When writing your own UI, you can use the following API to communicate with the backend server. The backend server will doing the parsing of the query results and sending the parsed results to the frontend. Here is the current specification of the API:
+
+##### GET /ws
+    - opens a websocket connection to the server
+    - the server will send a `notification` message to the client when the query results have been updated. Indicates that the client should request the query results again.
+    - if a websocket message is set to the server with the following content, the websocket will return the query results to the client:
+```json
+{
+    "action": "QUERY_RESULTS"
+}
+```
+
+#### notification websocket messages 
+when new query results are available, the server will send a notification message to the client. The message will be in the following format:
+```json
+{
+    "parsedAt": "number", // the epoch time in seconds that the query results were parsed
+}
+```
+The contents of this message does not contain the actual query results. The client should request the query results again by making an http request (described below)  or by sending a websocket message to the server (described above)
+
+
+##### GET /raw-query-results
+    - returns the query results in the following format:
+```json
+{
+    "type": "string", // json or dbout
+    "parsedAt": "number", // the epoch time in seconds that the query results were parsed
+    "content": "string" // a string representation of the raw query results
+}
+
+```
+
+##### GET /typed-query-results
+    - returns the parsed query results in the following format:
+```json
+{
+    "type": "string", // json or dbout
+    "parsedAt": "number", // the epoch time in seconds that the query results were parsed
+    "content": [
+        {
+            "prefix": "string" // the prefix of the query results. This is mainly for mongodb results that have a prefix of "my_db> " in the results
+            "type": "string" // the type of the query results "json" or "dbout"
+            "content": "object" // string or map of columnName to value 
+            "header": [
+                {
+                    "name": "string" // the name of the field/column header 
+                    "inferredType": "string" // the inferred type (based on the ability to parse the field/column for the given result set)
+                    // values include "string", "number", "boolean", "date", "boolean", "object"
+                }
+
+            ] 
+        },
+        ...
+    ] 
+
+}
+
+
+```lua
+
 ### Contributing
 
 Contributions are welcome! If you find any issues or have any suggestions, please open an issue or submit a pull request.

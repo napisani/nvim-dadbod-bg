@@ -41,8 +41,9 @@ func main() {
 	if port == "" {
 		port = "4546"
 	}
+  altRootDir := os.Getenv("NVIM_DBBG_UI_ROOT_DIR")
 
-	go StartServer(port)
+	go StartServer(port, altRootDir)
 	plugin.Main(func(p *plugin.Plugin) error {
 		p.HandleAutocmd(&plugin.AutocmdOptions{Event: "User", Group: "ExmplNvGoClientGrp", Pattern: "*DBExecutePost", Eval: "*"},
 			func(eval *FileAutocmdEval) {
