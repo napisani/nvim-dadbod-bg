@@ -16,7 +16,12 @@ type FileAutocmdEval struct {
 
 func initLog(debug bool) {
 	tmpDir := os.TempDir()
-	logPath := path.Join(tmpDir, "nvim-dbbg.log")
+	var logPath string
+	if os.Getenv("NVIM_DBBG_LOG_FILE") != "" {
+		logPath = os.Getenv("NVIM_DBBG_LOG_FILE")
+	} else {
+		logPath = path.Join(tmpDir, "nvim-dbbg.log")
+	}
 	if debug {
 		fmt.Println("Logging to: " + logPath)
 	}
@@ -41,7 +46,7 @@ func main() {
 	if port == "" {
 		port = "4546"
 	}
-  altRootDir := os.Getenv("NVIM_DBBG_UI_ROOT_DIR")
+	altRootDir := os.Getenv("NVIM_DBBG_UI_ROOT_DIR")
 
 	go StartServer(port, altRootDir)
 	plugin.Main(func(p *plugin.Plugin) error {

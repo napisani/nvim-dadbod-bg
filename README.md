@@ -29,10 +29,12 @@ The webserver then displays the results in a browser. The webserver is written i
 use {
     'napisani/nvim-dadbod-bg',
     run = './install.sh',
-    -- (optional) the default port is 4546
     config = function()
+    -- (optional) the default port is 4546
+    -- (optional) the log file will be created in the system's temp directory 
       vim.cmd([[
         let g:nvim_dadbod_bg_port = '4546'
+        leg g:nvim_dadbod_bg_log_file = '/tmp/nvim-dadbod-bg.log'
       ]])
     end
 }
@@ -45,9 +47,11 @@ Plug 'napisani/nvim-dadbod-bg', { 'do': './install.sh' }
     'napisani/nvim-dadbod-bg',
     build = './install.sh',
     -- (optional) the default port is 4546
+    -- (optional) the log file will be created in the system's temp directory 
     config = function()
       vim.cmd([[
         let g:nvim_dadbod_bg_port = '4546'
+        leg g:nvim_dadbod_bg_log_file = '/tmp/nvim-dadbod-bg.log'
       ]])
     end
 }
@@ -111,7 +115,8 @@ npm run dev
 
 ### Bring-Your-Own-UI
 > Cool idea, but your UI kinda sucks...
-That's fine! Write your own friggen UI why don't ya!
+
+That's fine! Write your own friggin UI why don't ya!
 
 You can configure this plugin to use your own custom UI by setting the `g:nvim_dadbod_bg_ui` variable to the path of your custom UI.
 The path is relative to where `nvim-dadbod-bg` is installed (IE: `~/.local/share/nvim/site/pack/packer/start/nvim-dadbod-bg`) or an absolute path.
@@ -125,10 +130,8 @@ Here is an example of configuring `nvim-dadbod-bg` to use a custom UI:
 use {
     'napisani/nvim-dadbod-bg',
     run = './install.sh',
-    -- (optional) the default port is 4546
     config = function()
       vim.cmd([[
-        let g:nvim_dadbod_bg_port = '4546'
         let g:nvim_dadbod_bg_ui_root_dir = '/home/user/my-awesome-dadbod-ui/dist'
       ]])
     end
@@ -191,11 +194,7 @@ The contents of this message does not contain the actual query results. The clie
         },
         ...
     ] 
-
 }
-
-
-```lua
 
 ### Contributing
 
