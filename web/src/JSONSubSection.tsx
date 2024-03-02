@@ -211,6 +211,7 @@ export function JSONSubSection({
           <div
             style={{
               height: `${globalSettings.gridCellHeightPx}px`,
+              overflowY: 'scroll',
             }}
             ref={searchNodeRef}
           >
