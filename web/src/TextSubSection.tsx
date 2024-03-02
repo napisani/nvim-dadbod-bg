@@ -63,7 +63,6 @@ export function TextSubSection({
       }}
       className={`output-line ${focused ? 'focused' : ''}`}
     >
-      <Prefix prefix={section.prefix} />
       <div
         style={{
           width: '100%',
@@ -79,6 +78,7 @@ export function TextSubSection({
         >
           <TextViewerControls settings={settings} onChange={setSettings} />
         </div>
+        <Prefix prefix={section.prefix} />
         <div ref={searchNodeRef}>
           <pre
             style={{

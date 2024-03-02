@@ -83,7 +83,6 @@ export function DBOutSubSection({
         }}
         className={`output-line ${focused ? 'focused' : ''}`}
       >
-        <Prefix prefix={section.prefix} />
         <div
           style={{
             width: '100%',
@@ -103,6 +102,7 @@ export function DBOutSubSection({
               }}
             />
           </div>
+          <Prefix prefix={section.prefix} />
           <div
             style={{
               marginTop: '0.5rem',

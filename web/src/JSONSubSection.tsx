@@ -187,7 +187,6 @@ export function JSONSubSection({
         }}
         className={`output-line ${focused ? 'focused' : ''}`}
       >
-        <Prefix prefix={section.prefix} />
         <div
           style={{
             width: '100%',
@@ -208,6 +207,7 @@ export function JSONSubSection({
               }}
             />
           </div>
+          <Prefix prefix={section.prefix} />
           <div
             style={{
               height: `${globalSettings.gridCellHeightPx}px`,
