@@ -1,9 +1,12 @@
+import { DisplayTypeControls } from './DisplayTypeControls'
 import { FilterControls } from './FilterControls'
+import { OutputType } from './query-results'
 import { debounce } from './utils'
 
 export interface TableControlsProps {
   settings: TableSettings
   onChange: (settings: TableSettings) => void
+  onDisplayTypeChange: (type: OutputType) => void
 }
 
 export interface TableSettings {
@@ -11,9 +14,14 @@ export interface TableSettings {
   filter: string
   applyFilter: boolean
   tableTheme: string
+  gridCellHeightPx: number
 }
 
-export function TableControls({ settings, onChange }: TableControlsProps) {
+export function TableControls({
+  settings,
+  onChange,
+  onDisplayTypeChange,
+}: TableControlsProps) {
   const debouncedOnChange = debounce(onChange, 500)
   return (
     <div
@@ -23,6 +31,11 @@ export function TableControls({ settings, onChange }: TableControlsProps) {
         justifyContent: 'right',
       }}
     >
+      <DisplayTypeControls
+        displayType="dbout"
+        displayTypeOptions={['json', 'dbout']}
+        setDisplayType={onDisplayTypeChange}
+      />
       <FilterControls
         setFilter={(filter) => {
           debouncedOnChange({ ...settings, filter })

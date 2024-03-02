@@ -2,29 +2,34 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { JSONViewerControls, JSONViewerSettings } from './JSONViewerControls'
 import { Prefix } from './Prefix'
-import { SubQueryResults } from './query-results'
+import { OutputType, SubQueryResults } from './query-results'
 import { useFocus } from './useFocusState'
 import { useGlobalSettings } from './useGlobalSettings'
 import { useMarker } from './useMarker'
 import { useScrollTo } from './useScrollTo'
 
 import { JSONTree, KeyPath } from 'react-json-tree'
-import { jsonViewerThemes } from './json.util'
+import { buildPathStringFromPathArray, jsonViewerThemes } from './json.util'
 
 import { useJsonContentLimiter } from './useJsonContentLimiter'
+import { trimQuotes } from './utils'
+interface JSONSubSectionProps {
+  section: SubQueryResults
+  index: number
+  setDisplayType: (idx: number, type: OutputType) => void
+}
 export function JSONSubSection({
   section,
   index,
-}: {
-  section: SubQueryResults
-  index: number
-}) {
+  setDisplayType,
+}: JSONSubSectionProps) {
   const { globalSettings } = useGlobalSettings()
   const [settings, setSettings] = useState<JSONViewerSettings>({
     collapsed: globalSettings.collapsed,
     jsonTheme: globalSettings.jsonTheme,
     filter: '',
     applyFilter: true,
+    showMoreAmount: globalSettings.showMoreAmount,
   })
 
   useEffect(() => {
@@ -92,10 +97,17 @@ export function JSONSubSection({
           }
           return level <= (settings.collapsed as number)
         }}
-        labelRenderer={([key]: KeyPath) => {
-          return (
-            <strong>{containsLimitToken(key?.toString()) ? '' : key}</strong>
+        labelRenderer={(keyPath: KeyPath) => {
+          const [key] = keyPath
+
+          if (containsLimitToken(key?.toString())) {
+            return <strong></strong>
+          }
+
+          const pathString = buildPathStringFromPathArray(
+            keyPath.slice().reverse().slice(1) as (string | number)[]
           )
+          return <strong title={pathString}>{key}</strong>
         }}
         valueRenderer={(raw, ...keyPath) => {
           if (typeof raw === 'string' && containsLimitToken(raw)) {
@@ -103,14 +115,60 @@ export function JSONSubSection({
               <button
                 onClick={() => {
                   const path = keyPath.slice(2, -1).reverse()
-                  addToLimitForKeyPath(path, 20)
+                  addToLimitForKeyPath(path, settings.showMoreAmount)
                 }}
               >
-                {replaceLimitToken(raw).replace(/"/g, '')}
+                {trimQuotes(replaceLimitToken(raw))}
               </button>
             )
           }
-          return <em>{raw as any}</em>
+          return (
+            <>
+              <span className="unhide-trigger-inline" onClick={() => {}}>
+                {raw as any}
+
+                <span
+                  className="hide"
+                  style={{
+                    marginLeft: '10px',
+                  }}
+                >
+                  <button
+                    style={{
+                      marginRight: '5px',
+                      fontSize: '9px',
+                      padding: '0px',
+                    }}
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        trimQuotes(raw?.toString() ?? 'undefined')
+                      )
+                    }}
+                  >
+                    copy value
+                  </button>
+                  <button
+                    style={{
+                      fontSize: '9px',
+                      padding: '0px',
+                    }}
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        buildPathStringFromPathArray(
+                          keyPath.slice(1).reverse().slice(1) as (
+                            | string
+                            | number
+                          )[]
+                        )
+                      )
+                    }}
+                  >
+                    copy path
+                  </button>
+                </span>
+              </span>
+            </>
+          )
         }}
       ></JSONTree>
     )
@@ -142,9 +200,22 @@ export function JSONSubSection({
               marginTop: '0.5rem',
             }}
           >
-            <JSONViewerControls settings={settings} onChange={setSettings} />
+            <JSONViewerControls
+              settings={settings}
+              onChange={setSettings}
+              onDisplayTypeChange={(type) => {
+                setDisplayType(index, type)
+              }}
+            />
           </div>
-          <div ref={searchNodeRef}>{jsonView}</div>
+          <div
+            style={{
+              height: `${globalSettings.gridCellHeightPx}px`,
+            }}
+            ref={searchNodeRef}
+          >
+            {jsonView}
+          </div>
         </div>
       </div>
     </>

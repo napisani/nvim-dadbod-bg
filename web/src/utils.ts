@@ -148,3 +148,7 @@ export function parseByInferredType(value: any, inferredType: DataType) {
   }
   return value ? value?.toString() : value
 }
+
+export function trimQuotes(value: string) {
+  return value.replace(/^"/, '').replace(/"$/, '')
+}

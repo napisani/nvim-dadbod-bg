@@ -1,12 +1,14 @@
 export interface RawQueryResults {
-  type: string
+  type: OutputType
   content: string
 }
 
 export interface TypedQueryResults {
-  type: string
+  type: OutputType
   content: SubQueryResults[]
 }
+
+export type OutputType = 'json' | 'dbout'
 
 export type DataType = 'string' | 'number' | 'boolean' | 'date' | 'object'
 

@@ -45,7 +45,7 @@ export function Table({ content, headers, settings }: TableProps) {
     >
       <div
         className={settings.tableTheme}
-        style={{ height: '500px' }} // the grid will fill the size of the parent container
+        style={{ height: `${settings.gridCellHeightPx}px` }} // the grid will fill the size of the parent container
       >
         <AgGridReact
           rowData={data}

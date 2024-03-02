@@ -1,10 +1,17 @@
 import { useRef } from 'react'
 import { FilterControls } from './FilterControls'
-import { booleanOrNumberToString, debounce, stringToBooleanOrNumber } from './utils'
+import {
+  booleanOrNumberToString,
+  debounce,
+  stringToBooleanOrNumber,
+} from './utils'
+import { DisplayTypeControls } from './DisplayTypeControls'
+import { OutputType } from './query-results'
 
 export interface JSONViewerControlsProps {
   settings: JSONViewerSettings
   onChange: (settings: JSONViewerSettings) => void
+  onDisplayTypeChange: (type: OutputType) => void
 }
 
 export interface JSONViewerSettings {
@@ -12,6 +19,7 @@ export interface JSONViewerSettings {
   filter: string
   applyFilter: boolean
   jsonTheme: string
+  showMoreAmount: number
 }
 
 const labelStyle = {
@@ -22,6 +30,7 @@ const labelStyle = {
 export function JSONViewerControls({
   settings,
   onChange,
+  onDisplayTypeChange,
 }: JSONViewerControlsProps) {
   const debouncedOnChange = debounce(onChange, 500)
   const collapsedRef = useRef<HTMLSelectElement>(null)
@@ -33,6 +42,11 @@ export function JSONViewerControls({
         justifyContent: 'right',
       }}
     >
+      <DisplayTypeControls
+        displayType="json"
+        displayTypeOptions={['json', 'dbout']}
+        setDisplayType={onDisplayTypeChange}
+      />
       <label style={labelStyle}>
         Collapsed:
         <select
@@ -55,6 +69,8 @@ export function JSONViewerControls({
           <option value="false">Expand All</option>
           <option value={1}>Expand 1 - level</option>
           <option value={2}>Expand 2 - levels</option>
+          <option value={3}>Expand 3 - levels</option>
+          <option value={4}>Expand 4 - levels</option>
         </select>
       </label>
 

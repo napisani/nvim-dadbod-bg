@@ -11,13 +11,19 @@ export interface GloballyStoredSettings {
   applyFilter: boolean
   jsonTheme: string
   tableTheme: string
+  showMoreAmount: number
+  gridCellsPerRow: number
+  gridCellHeightPx: number
 }
 
 const storageKey = 'GLOBAL_SETTINGS'
 
 export const defaultGlobalSettings: GloballyStoredSettings = {
   collapsed: 2,
+  showMoreAmount: 25,
   applyFilter: true,
+  gridCellsPerRow: 1,
+  gridCellHeightPx: 400,
   jsonTheme: 'twilight',
   tableTheme: isDarkModeDefault()
     ? 'ag-theme-alpine-auto-dark'

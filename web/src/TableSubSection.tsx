@@ -2,23 +2,27 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Prefix } from './Prefix'
 import { Table } from './Table'
 import { TableControls, TableSettings } from './TableControls'
-import { AttributeMap, SubQueryResults } from './query-results'
+import { AttributeMap, OutputType, SubQueryResults } from './query-results'
 import { useFocus } from './useFocusState'
 import { useGlobalSettings } from './useGlobalSettings'
 import { useScrollTo } from './useScrollTo'
 
+interface TableSubSectionProps {
+  section: SubQueryResults
+  index: number
+  setDisplayType: (idx: number, type: OutputType) => void
+}
 export function DBOutSubSection({
   section,
   index,
-}: {
-  section: SubQueryResults
-  index: number
-}) {
+  setDisplayType,
+}: TableSubSectionProps) {
   console.log('DBOutSubSection', section)
   const { globalSettings } = useGlobalSettings()
   const [settings, setSettings] = useState<TableSettings>({
     collapsed: globalSettings.collapsed,
     tableTheme: globalSettings.tableTheme,
+    gridCellHeightPx: globalSettings.gridCellHeightPx,
     filter: '',
     applyFilter: true,
   })
@@ -93,7 +97,13 @@ export function DBOutSubSection({
               justifyContent: 'right',
             }}
           >
-            <TableControls settings={settings} onChange={setSettings} />
+            <TableControls
+              settings={settings}
+              onChange={setSettings}
+              onDisplayTypeChange={(type) => {
+                setDisplayType(index, type)
+              }}
+            />
           </div>
           <div
             style={{

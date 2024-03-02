@@ -15,9 +15,7 @@ function App() {
       <GlobalSettingProvider>
         <button
           style={{
-            position: 'fixed',
-            top: 0,
-            right: 0,
+            float: 'right',
             fontSize: 20,
             background: 'none',
             border: 'none',

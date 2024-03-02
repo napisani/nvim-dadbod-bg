@@ -140,3 +140,14 @@ export const jsonViewerThemes: { [key: string]: any } = {
   tube,
   twilight,
 }
+
+export function buildPathStringFromPathArray(
+  path: (string | number)[]
+): string {
+  return path.reduce((acc: string, part: string | number) => {
+    if (typeof part === 'number') {
+      return `${acc}[${part}]`
+    }
+    return `${acc}.${part}`
+  }, '')
+}
