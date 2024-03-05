@@ -14,6 +14,11 @@ type FileAutocmdEval struct {
 	Filename string `eval:"expand('<amatch>:h')"`
 }
 
+type FileManualCmdEval struct {
+	Cwd  string `msgpack:",array"`
+	File string
+}
+
 func initLog(debug bool) {
 	tmpDir := os.TempDir()
 	var logPath string
@@ -50,6 +55,28 @@ func main() {
 
 	go StartServer(port, altRootDir)
 	plugin.Main(func(p *plugin.Plugin) error {
+
+		p.HandleCommand(&plugin.CommandOptions{Name: "DBBGSetFile", NArgs: "?", Eval: "[getcwd(), expand('%:p')]"},
+			func(args []string, eval *FileManualCmdEval) {
+				if len(args) > 0 && len(args[0]) > 0 {
+					file := args[0]
+					if file[0] == '/' || file[0] == '~' {
+						log.Print("DBBGSetFile - using provided absolute path: " + file)
+						SetQueryResults(file)
+						BroadcastQueryResults()
+					} else {
+						file = path.Join(eval.Cwd, file)
+						log.Print("DBBGSetFile - using provided file and relative path: " + file)
+						SetQueryResults(file)
+						BroadcastQueryResults()
+					}
+				} else {
+					log.Print("DBBGSetFile - no args provided, using current file: " + eval.File)
+					SetQueryResults(eval.File)
+					BroadcastQueryResults()
+				}
+			})
+
 		p.HandleAutocmd(&plugin.AutocmdOptions{Event: "User", Group: "ExmplNvGoClientGrp", Pattern: "*DBExecutePost", Eval: "*"},
 			func(eval *FileAutocmdEval) {
 				log.Print("DBExecutePost - wrote file: " + eval.Filename)

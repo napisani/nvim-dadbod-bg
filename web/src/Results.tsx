@@ -53,7 +53,7 @@ export function Results({
               />
             )
           }
-          if (type === 'dbout') {
+          if (type === 'dbout' || type === 'csv') {
             return (
               <DBOutSubSection
                 key={index}

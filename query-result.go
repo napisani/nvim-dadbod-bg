@@ -4,7 +4,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"log"
-	"strings"
+	"path/filepath"
 	"time"
 )
 
@@ -41,24 +41,22 @@ type DataHeaders []DataHeader
 var rawQueryResults RawQueryResults
 
 func SetQueryResults(file string) {
-	var t string
-	if strings.HasSuffix(file, ".json") {
-		t = "json"
-	} else if strings.HasSuffix(file, ".dbout") {
-		t = "dbout"
-	} else {
+	t := filepath.Ext(file)
+	if t == "" || t == "." {
 		t = "txt"
-	}
+	} else {
+    t = t[1:]
+  } 
 
 	content, err := ioutil.ReadFile(file)
 	if err != nil {
 		log.Fatal(err)
-	}
-
-	rawQueryResults = RawQueryResults{
-		t,
-		string(content),
-		time.Now().Unix(),
+	} else {
+		rawQueryResults = RawQueryResults{
+			t,
+			string(content),
+			time.Now().Unix(),
+		}
 	}
 }
 
@@ -73,13 +71,26 @@ func GetTypedQueryResults() (TypedQueryResults, error) {
 		log.Println("Parsing json")
 		subQueryResults := ParseJsonSubQueryResults(content)
 		log.Println("Parsed json successfully")
-		return TypedQueryResults{Type: "json", Content: subQueryResults, ParsedAt: rawQueryResults.ParsedAt}, nil
+		return TypedQueryResults{
+			Type:     "json",
+			Content:  subQueryResults,
+			ParsedAt: rawQueryResults.ParsedAt}, nil
+	} else if rawQueryResults.Type == "csv" {
+		log.Println("Parsing csv")
+		subQueryResults := ParseCsvSubQueryResults(content)
+		log.Println("Parsed csv successfully")
+		return TypedQueryResults{
+			Type:     "csv",
+			Content:  subQueryResults,
+			ParsedAt: rawQueryResults.ParsedAt}, nil
 	} else if rawQueryResults.Type == "dbout" {
 		log.Println("Parsing dbout")
 		subQueryResults := ParseDBOutSubQueryResults(content)
 		log.Println("Parsed dbout successfully")
-		return TypedQueryResults{Type: "dbout", 
-      Content: subQueryResults, ParsedAt: rawQueryResults.ParsedAt}, nil
+		return TypedQueryResults{
+			Type:     "dbout",
+			Content:  subQueryResults,
+			ParsedAt: rawQueryResults.ParsedAt}, nil
 	}
 
 	return TypedQueryResults{}, errors.New("Unknown type")

@@ -67,6 +67,20 @@ Plug 'napisani/nvim-dadbod-bg', { 'do': './install.sh' }
 5. You should see the results of your query in the browser. As you run more queries, the results will update in the browser.
 
 
+If you want to send results manually to nvim-dadbod-bg, you can use the following command:
+```vim
+" the current file will be sent to the webserver
+:DBBGSetFile
+
+" send a file with an absolute path to the webserver 
+:DBBGSetFile /absolute/path/to/query_results.json
+
+" send a file with a relative path (from nvim's cwd) to the webserver
+:DBBGSetFile relative/path/to/query_results.json
+
+```
+
+
 ### Development
 
 This plugin consists of three parts: 
@@ -165,7 +179,7 @@ The contents of this message does not contain the actual query results. The clie
     - returns the query results in the following format:
 ```json
 {
-    "type": "string", // json or dbout
+    "type": "string", // json, csv or dbout
     "parsedAt": "number", // the epoch time in seconds that the query results were parsed
     "content": "string" // a string representation of the raw query results
 }
@@ -176,7 +190,7 @@ The contents of this message does not contain the actual query results. The clie
     - returns the parsed query results in the following format:
 ```json
 {
-    "type": "string", // json or dbout
+    "type": "string", // json, csv  or dbout
     "parsedAt": "number", // the epoch time in seconds that the query results were parsed
     "content": [
         {

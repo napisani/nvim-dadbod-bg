@@ -12,7 +12,7 @@ export interface TypedQueryResults {
   receivedAt: number
 }
 
-export type OutputType = 'json' | 'dbout'
+export type OutputType = 'json' | 'dbout' | 'csv'
 
 export type DataType = 'string' | 'number' | 'boolean' | 'date' | 'object'
 

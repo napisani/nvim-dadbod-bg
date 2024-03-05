@@ -43,6 +43,5 @@ call remote#host#Register('nvim_dadbod_bg', 'x', function('s:Sart_nvim_dadbog_bg
 " the 'host' name is 'nvim_dadbod_bg'.
 call remote#host#RegisterPlugin('nvim_dadbod_bg', '0', [
 \ {'type': 'autocmd', 'name': 'User', 'sync': 0, 'opts': {'eval': '{''Filename'': expand(''<amatch>:h'')}', 'group': 'ExmplNvGoClientGrp', 'pattern': '*DBExecutePost'}},
+\ {'type': 'command', 'name': 'DBBGSetFile', 'sync': 0, 'opts': {'eval': '[getcwd(), expand(''%:p'')]', 'nargs': '?'}},
 \ ])
-
-

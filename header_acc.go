@@ -99,6 +99,7 @@ func (h *HeaderAccumulator) addHeader(name string) {
 	}
 }
 
+
 func (h *HeaderAccumulator) ToDataHeaders() DataHeaders {
 	headers := DataHeaders{}
 	for _, name := range h.headerOrder {
@@ -106,4 +107,8 @@ func (h *HeaderAccumulator) ToDataHeaders() DataHeaders {
 		headers = append(headers, header)
 	}
 	return headers
+}
+
+func (h *HeaderAccumulator) Count() int { 
+  return len(h.headers)
 }
