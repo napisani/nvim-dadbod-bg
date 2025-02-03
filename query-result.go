@@ -45,9 +45,10 @@ func SetQueryResults(file string) {
 	if t == "" || t == "." {
 		t = "txt"
 	} else {
-    t = t[1:]
-  } 
+		t = t[1:]
+	}
 
+	log.Println("Reading file:" + file)
 	content, err := ioutil.ReadFile(file)
 	if err != nil {
 		log.Fatal(err)

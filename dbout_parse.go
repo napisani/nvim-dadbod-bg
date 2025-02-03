@@ -38,18 +38,24 @@ func _parseDBOutSections(content string) [][]string {
 	return sections
 }
 
+func _trimTableBorders(line string) string {
+	return strings.TrimPrefix(line, "|")
+}
+
 func ParseDBOutSubQueryResults(content string) []SubQueryResults {
 	sections := _parseDBOutSections(content)
 	result := make([]SubQueryResults, len(sections))
 	for idx, section := range sections {
 		table := make([][]string, len(section))
+		section[0] = _trimTableBorders(section[0])
 		headerCount := strings.Count(section[0], columnDelimiter)
 		for rowIdx, line := range section {
-			line = strings.TrimSpace(strings.TrimSuffix(strings.TrimPrefix(line, "|"), "|"))
+			line = _trimTableBorders(line)
 			count := strings.Count(line, columnDelimiter)
 
 			if len(line) == 0 || count != headerCount {
-				log.Println("skipping row - column count mismatch:", line)
+				log.Println("skipping line - column count mismatch line:\n" + line)
+				log.Println("header:\n" + section[0])
 				continue
 			}
 
