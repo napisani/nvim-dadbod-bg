@@ -62,6 +62,9 @@ func (t *Table) SetHeader(header []string) {
 }
 
 func (t *Table) RemoveLastRow() {
+  if len(t.Rows) == 0 {
+    return
+  }
 	t.Rows = t.Rows[:len(t.Rows)-1]
 }
 
