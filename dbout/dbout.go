@@ -62,9 +62,9 @@ func (t *Table) SetHeader(header []string) {
 }
 
 func (t *Table) RemoveLastRow() {
-  if len(t.Rows) == 0 {
-    return
-  }
+	if len(t.Rows) == 0 {
+		return
+	}
 	t.Rows = t.Rows[:len(t.Rows)-1]
 }
 
@@ -172,7 +172,7 @@ func isLineIgnored(line string) bool {
 	lineTrimmed := strings.TrimSpace(line)
 	for _, ignoredReg := range ignoredRegexes {
 		if ignoredReg.MatchString(lineTrimmed) {
-			// log.Println("ignoring line:", line)
+			log.Println("ignoring line:", line)
 			return true
 		}
 	}
@@ -276,10 +276,6 @@ func ParseDBOutSubQueryResults(content string) []results.SubQueryResults {
 
 	contentLines = trimBorders(contentLines)
 
-	for _, line := range contentLines {
-		fmt.Println(line)
-	}
-	fmt.Println("----")
 	if len(contentLines) == 0 {
 		return result
 	}
@@ -321,7 +317,6 @@ func ParseDBOutSubQueryResults(content string) []results.SubQueryResults {
 		if table.IsEmpty() && !table.HasHeader() {
 			continue
 		}
-		fmt.Println(table.ToString())
 		r = append(r, table.ToSubQueryResults())
 	}
 
