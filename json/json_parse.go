@@ -92,7 +92,7 @@ func parsePrefixLinePairs(content string) []PrefixLinePairs {
 
 func ParseJsonSubQueryResults(content string) []results.SubQueryResults {
 	pairs := parsePrefixLinePairs(content)
-	results := []results.SubQueryResults{}
+	r := []results.SubQueryResults{}
 	for _, pair := range pairs {
 		content := interface{}(nil)
 		err := json.Unmarshal([]byte(pair.line), &content)
@@ -100,24 +100,24 @@ func ParseJsonSubQueryResults(content string) []results.SubQueryResults {
 			headerAcc := results.NewHeaderAccumulator(true, nil)
 			if arr, ok := content.([]interface{}); ok {
 				for _, row := range arr {
-					headerAcc.inspectRow(row.(map[string]interface{}))
+					headerAcc.InspectRow(row.(map[string]interface{}))
 				}
 			} else {
-				headerAcc.inspectRow(content.(map[string]interface{}))
+				headerAcc.InspectRow(content.(map[string]interface{}))
 			}
-			results = append(results, results.SubQueryResults{
+			r = append(r, results.SubQueryResults{
 				Prefix:  pair.prefix,
 				Type:    "json",
 				Content: content,
 				Header:  headerAcc.ToDataHeaders(),
 			})
 		} else {
-			results = append(results, results.SubQueryResults{
+			r = append(r, results.SubQueryResults{
 				Prefix:  pair.prefix,
 				Type:    "text",
 				Content: pair.line,
 			})
 		}
 	}
-	return results
+	return r
 }

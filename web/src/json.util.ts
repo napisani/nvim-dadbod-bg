@@ -79,10 +79,10 @@ export function parseJsonSections(results: RawQueryResults): SubQueryResults[] {
         const content = JSON.parse(section.line)
         if (Array.isArray(content)) {
           content.forEach((row) => {
-            headerAcc.inspectRow(row)
+            headerAcc.InspectRow(row)
           })
         } else {
-          headerAcc.inspectRow(content)
+          headerAcc.InspectRow(content)
         }
 
         return {

@@ -54,7 +54,7 @@ export class HeaderAccumulator {
     this.inferTypes = inferTypes
   }
 
-  inspectRow(row: AttributeMap) {
+  InspectRow(row: AttributeMap) {
     if (this.isStatic && !this.inferTypes) {
       return
     }

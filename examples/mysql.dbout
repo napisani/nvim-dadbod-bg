@@ -1,15 +1,11 @@
-mysql: [Warning] Using a password on the command line interface can be insecure.
-+----+---------+------+---------------------+
-| id | name    | age  | email               |
-+----+---------+------+---------------------+
-|  1 | Alice   |   28 | alice@example.com   |
-|  2 | Bob     |   35 | bob@example.com     |
-|  3 | Charlie |   42 | charlie@example.com |
-|  4 | Diana   |   31 | diana@example.com   |
-|  5 | Ethan   |   25 | ethan@example.com   |
-|  6 | Fiona   |   39 | fiona@example.com   |
-|  7 | George  |   45 | george@example.com  |
-|  8 | Hannah  |   33 | hannah@example.com  |
-|  9 | Ian     |   29 | ian@example.com     |
-| 10 | Julia   |   37 | julia@example.com   |
-+----+---------+------+---------------------+
++----+-------+
+| ID | Name  |
++----+-------+
+| 1  | John  |
+| 2  | Alice |
++----+-------+
++----+-------+
+| ID | Name  |
++----+-------+
+| 3  | Bob   |
++----+-------+

@@ -103,7 +103,7 @@ func TestParsePrefixLinePairs(t *testing.T) {
 }
 
 func TestParseJsonSections(t *testing.T) {
-	content, _ := ioutil.ReadFile("./test_data/mongo.json")
+	content, _ := ioutil.ReadFile("../test_data/mongo.json")
 	contentStr := string(content)
 
 	pairs := parsePrefixLinePairs(contentStr)
@@ -186,7 +186,7 @@ func TestParseJsonSections(t *testing.T) {
 }
 
 func TestParseJsonSubQueryResults(t *testing.T) {
-	content, _ := ioutil.ReadFile("./test_data/mongo.json")
+	content, _ := ioutil.ReadFile("../test_data/mongo.json")
 	contentStr := string(content)
 	expected := []results.SubQueryResults{
 		results.SubQueryResults{

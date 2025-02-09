@@ -2,10 +2,12 @@
   "version": "0.2",
   "language": "en",
   "words": [
-    "dbout"
+    "dbout",
+    "napisani",
+    "dadbod",
+    "nvim",
+    "upgrader"
   ],
   "flagWords": [],
-  "ignorePaths": [
-  ]
+  "ignorePaths": []
 }
-

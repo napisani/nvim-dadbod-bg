@@ -44,7 +44,7 @@ export function parseDBOutSections(results: RawQueryResults): SubQueryResults[] 
         acc[columnName] = row[index]
         return acc
       }, {} as AttributeMap)
-      headerAcc.inspectRow(rowWithColKeys)
+      headerAcc.InspectRow(rowWithColKeys)
       return rowWithColKeys
     })
 

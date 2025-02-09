@@ -216,6 +216,8 @@ func (bt *BorderTracker) divide() {
 		bt.position = HEADER
 	} else if bt.position == HEADER {
 		bt.position = END
+	} else if bt.position == END {
+		bt.position = BEGIN
 	}
 }
 
@@ -271,6 +273,10 @@ func ParseDBOutSubQueryResults(content string) []results.SubQueryResults {
 
 	contentLines = trimBorders(contentLines)
 
+	for _, line := range contentLines {
+		fmt.Println(line)
+	}
+	fmt.Println("----")
 	if len(contentLines) == 0 {
 		return result
 	}
@@ -286,9 +292,8 @@ func ParseDBOutSubQueryResults(content string) []results.SubQueryResults {
 			newRule := NewRowRuleFromDivider(line)
 			currentRule = &newRule
 			lastLine := contentLines[idx-1]
-			if len(tables) > 0 {
-				lastTable := tables[len(tables)-1]
-				lastTable.RemoveLastRow()
+			if currentTable != nil {
+				currentTable.RemoveLastRow()
 			}
 			if currentTable != nil {
 				tables = append(tables, *currentTable)

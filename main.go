@@ -100,9 +100,9 @@ import (
 
 func main() {
 	files := []string{
-		"examples/mssql.dbout",
-		"examples/postgres.dbout",
-		"examples/sqlite.dbout",
+		// "examples/mssql.dbout",
+		// "examples/postgres.dbout",
+		// "examples/sqlite.dbout",
 		"examples/mysql.dbout",
 	}
 

@@ -15,7 +15,7 @@ func TestInspectRow(t *testing.T) {
 		"header5": "hello world",
 	}
 
-	h.inspectRow(row)
+	h.InspectRow(row)
 
 	expectedHeaders := map[string]string{
 		"header1": "boolean",
