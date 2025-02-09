@@ -2,6 +2,7 @@ package dbout
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"strings"
 
@@ -9,12 +10,6 @@ import (
 )
 
 type AttributeMap map[string]interface{}
-type CharRange struct {
-	start int
-	end   int
-}
-
-const columnDelimiter = " | "
 
 // Define constant string patterns
 const (
@@ -27,7 +22,6 @@ var ignoredRegexes []*regexp.Regexp
 
 // init function to compile the regexps when the package is initialized
 func init() {
-	println("init")
 	patterns := []string{
 		mysqlWarningPattern,
 		postgresRowCountPattern,
@@ -37,6 +31,125 @@ func init() {
 	for i, pattern := range patterns {
 		ignoredRegexes[i] = regexp.MustCompile(pattern)
 	}
+}
+
+type Table struct {
+	Header []string
+	Rows   [][]string
+}
+
+func NewTable() *Table {
+	return &Table{
+		Header: []string{},
+		Rows:   [][]string{},
+	}
+}
+
+func (t *Table) AddRow(row []string) {
+	t.Rows = append(t.Rows, row)
+}
+
+func (t *Table) SetHeader(header []string) {
+	t.Header = header
+}
+
+func (t *Table) RemoveLastRow() {
+	t.Rows = t.Rows[:len(t.Rows)-1]
+}
+
+func (t *Table) ToString() string {
+	delim := " | "
+	str := fmt.Sprintf("Header: \n%v\n", strings.Join(t.Header, delim))
+	for _, row := range t.Rows {
+		str += strings.Join(row, delim) + "\n"
+	}
+	return str
+}
+
+func (t *Table) ToSubQueryResults() results.SubQueryResults {
+	header := t.Header
+	rows := t.Rows
+
+	headerAcc := results.NewHeaderAccumulator(true, header)
+	rowsWithCols := []AttributeMap{}
+
+	for _, row := range rows {
+		rowWithColKeys := make(AttributeMap)
+		if len(row) != len(header) {
+			log.Println("skipping row - column count mismatch:", row)
+			continue
+		}
+		for colIdx, columnName := range header {
+			rowWithColKeys[columnName] = row[colIdx]
+		}
+		headerAcc.InspectRow(rowWithColKeys)
+		rowsWithCols = append(rowsWithCols, rowWithColKeys)
+	}
+
+	return results.SubQueryResults{
+		Type:    "dbout",
+		Content: rowsWithCols,
+		Prefix:  "",
+		Header:  headerAcc.ToDataHeaders(),
+	}
+}
+
+type ColumnRange struct {
+	start int
+	end   int
+}
+
+type RowRule struct {
+	ranges    []ColumnRange
+	hasBorder bool
+}
+
+func (rr *RowRule) ParseLine(row string) []string {
+	cols := []string{}
+	for _, r := range rr.ranges {
+		end := r.end
+		start := r.start
+		if end == -1 && start > -1 {
+			// final range case - take the rest of the line
+			end = len(row)
+			if rr.hasBorder {
+				// if it has a border then trim off the border character
+				end--
+			}
+		}
+
+		if end <= len(row) && start > -1 {
+			col := row[start:end]
+			col = strings.TrimSpace(col)
+			cols = append(cols, col)
+		} else {
+			cols = append(cols, "")
+		}
+
+	}
+	return cols
+}
+
+func NewRowRuleFromDivider(line string) RowRule {
+	ranges := []ColumnRange{}
+	start := 0
+	end := 0
+	content_reg := regexp.MustCompile(`[-]+`)
+	matches := content_reg.FindAllStringIndex(line, -1)
+	for idx, match := range matches {
+		start = match[0]
+		if idx != len(matches)-1 {
+			end = match[1]
+			if end-start > 0 {
+				ranges = append(ranges, ColumnRange{start, end})
+			}
+		} else {
+			// the last column range should go to the end of the output
+			ranges = append(ranges, ColumnRange{start, -1})
+		}
+	}
+	rr := RowRule{ranges, isHeaderLineDivider(line)}
+	return rr
 }
 
 func splitContent(content string) []string {
@@ -66,52 +179,52 @@ func hasBorders(lines []string) bool {
 			// if the first real content line is a divider, then there are borders
 			return includedLineIdx == 0
 		}
+		includedLineIdx++
 	}
 	return false
 }
 
+const (
+	NONE int = iota
+	BEGIN
+	HEADER
+	END
+)
+
 type BorderTracker struct {
-	foundBegin  bool
-	foundHeader bool
-	foundEnd    bool
+	position int
 }
 
-func (bt *BorderTracker) reset() {
-	bt.foundBegin = false
-	bt.foundHeader = false
-	bt.foundEnd = false
+func NewBorderTracker() *BorderTracker {
+	return &BorderTracker{
+		position: NONE,
+	}
 }
 
 func (bt *BorderTracker) divide() {
-	if bt.foundBegin && bt.foundHeader && bt.foundEnd {
-		bt.reset()
-		bt.foundBegin = true
-	} else if !bt.foundBegin {
-		bt.foundBegin = true
-	} else if bt.foundBegin && !bt.foundHeader {
-		bt.foundBegin = true
-	} else if bt.foundBegin && bt.foundHeader && !bt.foundEnd {
-		bt.foundEnd = true
+	if bt.position == NONE {
+		bt.position = BEGIN
+	} else if bt.position == BEGIN {
+		bt.position = HEADER
+	} else if bt.position == HEADER {
+		bt.position = END
 	}
 }
+
 func (bt *BorderTracker) shouldRemoveDivider() bool {
-	if bt.foundBegin && !bt.foundHeader && !bt.foundEnd {
-		return true
-	}
-	if bt.foundEnd {
-		return true
-	}
-	return false
+	return bt.position == BEGIN || bt.position == END
 }
 
 func trimBorders(lines []string) []string {
-	if !hasBorders(lines) {
+	b := hasBorders(lines)
+
+	if !b {
 		return lines
 	}
 	trimmed_lines := []string{}
-	border_tracker := BorderTracker{}
+	border_tracker := NewBorderTracker()
 
-	for idx, line := range lines {
+	for _, line := range lines {
 		if isLineIgnored(line) {
 			continue
 		}
@@ -120,8 +233,6 @@ func trimBorders(lines []string) []string {
 			border_tracker.divide()
 			if !border_tracker.shouldRemoveDivider() {
 				trimmed_lines = append(trimmed_lines, line)
-			} else {
-				fmt.Println("removing divider " + string(idx))
 			}
 		} else {
 			trimmed_lines = append(trimmed_lines, line)
@@ -138,57 +249,61 @@ func isHeaderLineDivider(line string) bool {
 	// regex to match - or + or space or |
 	allowedChars := regexp.MustCompile(`[-+|\s]`)
 	matching_char_count := len(allowedChars.FindAllString(line_trimmed, -1))
-	return matching_char_count == len(line_trimmed)
+	isDivider := matching_char_count == len(line_trimmed)
+	return isDivider
 }
 
 func ParseDBOutSubQueryResults(content string) []results.SubQueryResults {
 	var result []results.SubQueryResults
-	content_lines := splitContent(content)
+	contentLines := splitContent(content)
 
-	if len(content_lines) == 0 {
+	if len(contentLines) == 0 {
 		return result
 	}
 
-	content_lines = trimBorders(content_lines)
+	contentLines = trimBorders(contentLines)
 
-	if len(content_lines) == 0 {
+	if len(contentLines) == 0 {
 		return result
 	}
 
-	included_line_idx := 0
-	for _, line := range content_lines {
+	tables := []Table{}
+	var currentRule *RowRule
+	var currentTable *Table
+	for idx, line := range contentLines {
 		if isLineIgnored(line) {
 			continue
 		}
-		fmt.Println(line)
-
-		included_line_idx++
+		if isHeaderLineDivider(line) {
+			newRule := NewRowRuleFromDivider(line)
+			currentRule = &newRule
+			lastLine := contentLines[idx-1]
+			if len(tables) > 0 {
+				lastTable := tables[len(tables)-1]
+				lastTable.RemoveLastRow()
+			}
+			if currentTable != nil {
+				tables = append(tables, *currentTable)
+			}
+			currentTable = NewTable()
+			header := currentRule.ParseLine(lastLine)
+			currentTable.SetHeader(header)
+			continue
+		}
+		if currentRule == nil {
+			continue
+		}
+		currentTable.AddRow(currentRule.ParseLine(line))
+	}
+	if currentTable != nil {
+		tables = append(tables, *currentTable)
 	}
 
-	return result
+	r := []results.SubQueryResults{}
+	for _, table := range tables {
+		fmt.Println(table.ToString())
+		r = append(r, table.ToSubQueryResults())
+	}
+
+	return r
 }
-
-// func getSubQueryResults(header string, rows []string) results.SubQueryResults {
-// headerAcc := results.NewHeaderAccumulator(true, header)
-// rowsWithCols := []AttributeMap{}
-
-// for _, row := range rows {
-// 	rowWithColKeys := make(AttributeMap)
-// 	if len(row) != len(header) {
-// 		log.Println("skipping row - column count mismatch:", row)
-// 		continue
-// 	}
-// 	for colIdx, columnName := range header {
-// 		rowWithColKeys[columnName] = row[colIdx]
-// 	}
-// 	headerAcc.inspectRow(rowWithColKeys)
-// 	rowsWithCols = append(rowsWithCols, rowWithColKeys)
-// }
-
-// result[idx] = SubQueryResults{
-// 	Type:    "dbout",
-// 	Content: rowsWithCols,
-// 	Prefix:  "",
-// 	Header:  headerAcc.ToDataHeaders(),
-// }
-// }
