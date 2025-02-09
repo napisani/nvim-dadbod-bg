@@ -1,16 +1,18 @@
-package main
+package csv
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/napisani/nvim-dadbod-bg/results"
 )
 
 func TestParseCsvSubQueryResult(t *testing.T) {
 	content := "name,age,email\nJohn,25,john@example.com\nJane,30,jane@example.com"
-	expectedHeader := []DataHeader{
-		DataHeader{Name: "name", InferredType: "string"},
-		DataHeader{Name: "age", InferredType: "number"},
-		DataHeader{Name: "email", InferredType: "string"},
+	expectedHeader := []results.DataHeader{
+		results.DataHeader{Name: "name", InferredType: "string"},
+		results.DataHeader{Name: "age", InferredType: "number"},
+		results.DataHeader{Name: "email", InferredType: "string"},
 	}
 	expectedContent := []map[string]interface{}{
 		{"name": "John", "age": "25", "email": "john@example.com"},

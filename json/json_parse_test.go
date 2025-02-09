@@ -1,4 +1,4 @@
-package main
+package json
 
 import (
 	"encoding/json"
@@ -7,6 +7,8 @@ import (
 	"slices"
 	"strings"
 	"testing"
+
+	"github.com/napisani/nvim-dadbod-bg/results"
 )
 
 func TestMatchesPrefixes(t *testing.T) {
@@ -186,33 +188,33 @@ func TestParseJsonSections(t *testing.T) {
 func TestParseJsonSubQueryResults(t *testing.T) {
 	content, _ := ioutil.ReadFile("./test_data/mongo.json")
 	contentStr := string(content)
-	expected := []SubQueryResults{
-		SubQueryResults{
+	expected := []results.SubQueryResults{
+		results.SubQueryResults{
 			Prefix:  "Enterprise rs-localdev [direct: primary] test>",
 			Type:    "text",
 			Content: "",
 		},
-		SubQueryResults{
+		results.SubQueryResults{
 			Prefix:  "Enterprise rs-localdev [direct: primary] test>",
 			Type:    "text",
 			Content: " switched to db mongo_test\n",
 		},
-		SubQueryResults{
+		results.SubQueryResults{
 			Prefix:  "Enterprise rs-localdev [direct: primary] mongo_test>",
 			Type:    "text",
 			Content: "",
 		},
-		SubQueryResults{
+		results.SubQueryResults{
 			Prefix:  "Enterprise rs-localdev [direct: primary] mongo_test>",
 			Type:    "text",
 			Content: "",
 		},
-		SubQueryResults{
+		results.SubQueryResults{
 			Prefix:  "Enterprise rs-localdev [direct: primary] mongo_test>",
 			Type:    "text",
 			Content: "",
 		},
-		SubQueryResults{
+		results.SubQueryResults{
 			Prefix: "Enterprise rs-localdev [direct: primary] mongo_test>",
 			Type:   "text",
 			Content: `[
@@ -232,9 +234,9 @@ func TestParseJsonSubQueryResults(t *testing.T) {
     price: 30
   }
 ]`,
-			Header: []DataHeader{},
+			Header: []results.DataHeader{},
 		},
-		SubQueryResults{
+		results.SubQueryResults{
 			Prefix: "Enterprise rs-localdev [direct: primary] mongo_test>",
 			Type:   "text",
 			Content: `[
@@ -251,9 +253,9 @@ func TestParseJsonSubQueryResults(t *testing.T) {
     email: 'janesmith@example.com'
   }
 ]`,
-			Header: []DataHeader{},
+			Header: []results.DataHeader{},
 		},
-		SubQueryResults{
+		results.SubQueryResults{
 			Prefix:  "Enterprise rs-localdev [direct: primary] mongo_test>",
 			Type:    "text",
 			Content: "",

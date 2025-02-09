@@ -1,4 +1,4 @@
-package main
+package results
 
 import (
 	"encoding/json"
@@ -30,7 +30,7 @@ func NewHeaderAccumulator(inferTypes bool, staticHeaders []string) *HeaderAccumu
 	return h
 }
 
-func (h *HeaderAccumulator) inspectRow(row map[string]interface{}) {
+func (h *HeaderAccumulator) InspectRow(row map[string]interface{}) {
 	if h.isStatic && !h.inferTypes {
 		return
 	}
@@ -94,21 +94,20 @@ func (h *HeaderAccumulator) reevaluateInferredType(value interface{}, header Dat
 
 func (h *HeaderAccumulator) addHeader(name string) {
 	if _, ok := h.headers[name]; !ok {
-    h.headerOrder = append(h.headerOrder, name)
+		h.headerOrder = append(h.headerOrder, name)
 		h.headers[name] = DataHeader{Name: name}
 	}
 }
 
-
 func (h *HeaderAccumulator) ToDataHeaders() DataHeaders {
 	headers := DataHeaders{}
 	for _, name := range h.headerOrder {
-    header := h.headers[name]
+		header := h.headers[name]
 		headers = append(headers, header)
 	}
 	return headers
 }
 
-func (h *HeaderAccumulator) Count() int { 
-  return len(h.headers)
+func (h *HeaderAccumulator) Count() int {
+	return len(h.headers)
 }

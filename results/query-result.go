@@ -1,7 +1,6 @@
-package main
+package results
 
 import (
-	"errors"
 	"io/ioutil"
 	"log"
 	"path/filepath"
@@ -65,35 +64,35 @@ func GetRawQueryResults() RawQueryResults {
 	return rawQueryResults
 }
 
-func GetTypedQueryResults() (TypedQueryResults, error) {
-	content := rawQueryResults.Content
-	log.Println("Type", rawQueryResults.Type)
-	if rawQueryResults.Type == "json" {
-		log.Println("Parsing json")
-		subQueryResults := ParseJsonSubQueryResults(content)
-		log.Println("Parsed json successfully")
-		return TypedQueryResults{
-			Type:     "json",
-			Content:  subQueryResults,
-			ParsedAt: rawQueryResults.ParsedAt}, nil
-	} else if rawQueryResults.Type == "csv" {
-		log.Println("Parsing csv")
-		subQueryResults := ParseCsvSubQueryResults(content)
-		log.Println("Parsed csv successfully")
-		return TypedQueryResults{
-			Type:     "csv",
-			Content:  subQueryResults,
-			ParsedAt: rawQueryResults.ParsedAt}, nil
-	} else if rawQueryResults.Type == "dbout" {
-		log.Println("Parsing dbout")
-		subQueryResults := ParseDBOutSubQueryResults(content)
-		log.Println("Parsed dbout successfully")
-		return TypedQueryResults{
-			Type:     "dbout",
-			Content:  subQueryResults,
-			ParsedAt: rawQueryResults.ParsedAt}, nil
-	}
+// func GetTypedQueryResults() (TypedQueryResults, error) {
+// 	content := rawQueryResults.Content
+// 	log.Println("Type", rawQueryResults.Type)
+// 	if rawQueryResults.Type == "json" {
+// 		log.Println("Parsing json")
+// 		subQueryResults := ParseJsonSubQueryResults(content)
+// 		log.Println("Parsed json successfully")
+// 		return TypedQueryResults{
+// 			Type:     "json",
+// 			Content:  subQueryResults,
+// 			ParsedAt: rawQueryResults.ParsedAt}, nil
+// 	} else if rawQueryResults.Type == "csv" {
+// 		log.Println("Parsing csv")
+// 		subQueryResults := ParseCsvSubQueryResults(content)
+// 		log.Println("Parsed csv successfully")
+// 		return TypedQueryResults{
+// 			Type:     "csv",
+// 			Content:  subQueryResults,
+// 			ParsedAt: rawQueryResults.ParsedAt}, nil
+// 	} else if rawQueryResults.Type == "dbout" {
+// 		log.Println("Parsing dbout")
+// 		subQueryResults := ParseDBOutSubQueryResults(content)
+// 		log.Println("Parsed dbout successfully")
+// 		return TypedQueryResults{
+// 			Type:     "dbout",
+// 			Content:  subQueryResults,
+// 			ParsedAt: rawQueryResults.ParsedAt}, nil
+// 	}
 
-	return TypedQueryResults{}, errors.New("Unknown type")
+// 	return TypedQueryResults{}, errors.New("Unknown type")
 
-}
+// }

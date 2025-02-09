@@ -1,21 +1,22 @@
-package main
+package csv
 
 import (
 	"encoding/csv"
 	"io"
 	"log"
 	"strings"
+
+	"github.com/napisani/nvim-dadbod-bg/results"
 )
 
-
-func ParseCsvSubQueryResults(content string) []SubQueryResults {
-  return []SubQueryResults{ParseCsvSubQueryResult(content)}
+func ParseCsvSubQueryResults(content string) []results.SubQueryResults {
+	return []results.SubQueryResults{ParseCsvSubQueryResult(content)}
 }
 
-func ParseCsvSubQueryResult(content string) SubQueryResults {
+func ParseCsvSubQueryResult(content string) results.SubQueryResults {
 	reader := csv.NewReader(strings.NewReader(content))
 	rows := make([]map[string]interface{}, 0)
-	var headerAcc HeaderAccumulator
+	var headerAcc results.HeaderAccumulator
 	var headers []string
 
 	first := true
@@ -28,7 +29,7 @@ func ParseCsvSubQueryResult(content string) SubQueryResults {
 			log.Println("an error occurred parsing a csv line", err)
 		}
 		if first {
-			headerAcc = *NewHeaderAccumulator(true, record)
+			headerAcc = *results.NewHeaderAccumulator(true, record)
 			headers = record
 			first = false
 			continue
@@ -43,13 +44,13 @@ func ParseCsvSubQueryResult(content string) SubQueryResults {
 			row[header] = record[i]
 		}
 
-		headerAcc.inspectRow(row)
-    rows = append(rows, row)
+		headerAcc.InspectRow(row)
+		rows = append(rows, row)
 	}
-	return SubQueryResults{
+	return results.SubQueryResults{
 		Header:  headerAcc.ToDataHeaders(),
 		Content: rows,
 		Prefix:  "",
-    Type:    "csv",
+		Type:    "csv",
 	}
 }

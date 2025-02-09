@@ -1,7 +1,9 @@
-package main
+package json
 
 import (
 	"encoding/json"
+
+	"github.com/napisani/nvim-dadbod-bg/results"
 )
 
 type PrefixLinePairs struct {
@@ -88,14 +90,14 @@ func parsePrefixLinePairs(content string) []PrefixLinePairs {
 	return pairs
 }
 
-func ParseJsonSubQueryResults(content string) []SubQueryResults {
+func ParseJsonSubQueryResults(content string) []results.SubQueryResults {
 	pairs := parsePrefixLinePairs(content)
-	results := []SubQueryResults{}
+	results := []results.SubQueryResults{}
 	for _, pair := range pairs {
 		content := interface{}(nil)
 		err := json.Unmarshal([]byte(pair.line), &content)
 		if err == nil {
-			headerAcc := NewHeaderAccumulator(true, nil)
+			headerAcc := results.NewHeaderAccumulator(true, nil)
 			if arr, ok := content.([]interface{}); ok {
 				for _, row := range arr {
 					headerAcc.inspectRow(row.(map[string]interface{}))
@@ -103,14 +105,14 @@ func ParseJsonSubQueryResults(content string) []SubQueryResults {
 			} else {
 				headerAcc.inspectRow(content.(map[string]interface{}))
 			}
-			results = append(results, SubQueryResults{
+			results = append(results, results.SubQueryResults{
 				Prefix:  pair.prefix,
 				Type:    "json",
 				Content: content,
 				Header:  headerAcc.ToDataHeaders(),
 			})
 		} else {
-			results = append(results, SubQueryResults{
+			results = append(results, results.SubQueryResults{
 				Prefix:  pair.prefix,
 				Type:    "text",
 				Content: pair.line,
