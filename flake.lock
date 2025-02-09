@@ -63,7 +63,7 @@
         "type": "indirect"
       }
     },
-    "node_dep": {
+    "npks": {
       "locked": {
         "lastModified": 1696009558,
         "narHash": "sha256-/1nNL8lCF0gn38XaFyu2ufpWcBFwCDZyYUxdZkM6GxU=",
@@ -85,7 +85,7 @@
         "golang_dep": "golang_dep",
         "goreleaser_dep": "goreleaser_dep",
         "nixpkgs": "nixpkgs",
-        "node_dep": "node_dep"
+        "npks": "npks"
       }
     },
     "systems": {

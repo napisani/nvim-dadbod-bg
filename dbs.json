@@ -1,0 +1,9 @@
+{
+  "connections": {
+    "mysql": "mysql://root:root@laptop:3306",
+    "postgres": "postgres://root:root@localhost:5432/mydb",
+    "mongodb": "mongodb://root:root@localhost:27017",
+    "sqlite": "sqlite:///./db.sqlite",
+    "sqlserver": "sqlserver://sa:YourStrong_Password123@localhost:1433"
+  }
+}

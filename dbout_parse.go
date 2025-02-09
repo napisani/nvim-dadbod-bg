@@ -11,14 +11,19 @@ type AttributeMap map[string]interface{}
 const columnDelimiter = " | "
 
 func _parseDBOutSections(content string) [][]string {
-	newlineRegex := regexp.MustCompile(`[\||\+][\r|\n|\r\n]`)
+	newlineRegex := regexp.MustCompile(`[\r|\n|\r\n]`)
 	lines := newlineRegex.Split(content, -1)
 	sections := make([][]string, 0)
 	currentSection := make([]string, 0)
 	dividerRowCounter := 0
 
 	for idx, line := range lines {
-		if (strings.Count(line, "+") + strings.Count(line, "-")) == len(strings.TrimSpace(line)) {
+    line_trimmed = strings.TrimSpace(line)
+    pluses = strings.Count(line_trimmed, "+")
+    hyphens = strings.Count(line_trimmed, "-")
+    spaces = strings.Count(line_trimmed, " ")
+
+		if (strings.Count() == len(strings.TrimSpace(line)) {
 			dividerRowCounter++
 			if dividerRowCounter == 3 {
 				sections = append(sections, append([]string(nil), currentSection...))
