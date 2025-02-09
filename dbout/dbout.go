@@ -45,6 +45,14 @@ func NewTable() *Table {
 	}
 }
 
+func (t *Table) IsEmpty() bool {
+	return len(t.Rows) == 0
+}
+
+func (t *Table) HasHeader() bool {
+	return len(t.Header) > 0
+}
+
 func (t *Table) AddRow(row []string) {
 	t.Rows = append(t.Rows, row)
 }
@@ -295,12 +303,16 @@ func ParseDBOutSubQueryResults(content string) []results.SubQueryResults {
 		}
 		currentTable.AddRow(currentRule.ParseLine(line))
 	}
+
 	if currentTable != nil {
 		tables = append(tables, *currentTable)
 	}
 
 	r := []results.SubQueryResults{}
 	for _, table := range tables {
+		if table.IsEmpty() && !table.HasHeader() {
+			continue
+		}
 		fmt.Println(table.ToString())
 		r = append(r, table.ToSubQueryResults())
 	}
