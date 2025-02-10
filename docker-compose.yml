@@ -2,13 +2,12 @@ version: '3.8'
 
 services:
   mysql:
-    image: mysql:latest
+    build:
+      context: ./dbs/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
     ports:
       - "3306:3306"
-    # volumes:
-    #   - ./mysql-init.sql:/docker-entrypoint-initdb.d/init.sql
 
   mssql:
     build:
@@ -22,23 +21,20 @@ services:
       - "1433:1433"
 
   postgres:
-    image: postgres:latest
+    build:
+      context: ./dbs/postgres
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_DB: mydb
     ports:
       - "5432:5432"
-    volumes:
-      - ./dbs/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   mongodb:
-    image: mongo:latest
+    build:
+      context: ./dbs/mongo
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
     ports:
       - "27017:27017"
-    # volumes:
-    #   - ./mongo-init.js:/docker-entrypoint-initdb.d/init.js
-

@@ -1,3 +1,5 @@
+PHONY: all buildweb buildgo testgo manifest rundboutdriver clean
+
 all: clean buildweb buildgo 
 
 buildweb:

@@ -1,3 +1,4 @@
+You are now connected to database "mydb" as user "root".
  id |  name   | age |        email        
 ----+---------+-----+---------------------
   1 | Alice   |  28 | alice@example.com

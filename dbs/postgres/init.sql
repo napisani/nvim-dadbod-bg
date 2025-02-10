@@ -1,4 +1,15 @@
-CREATE DATABASE mydb WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
+DO
+$do$
+BEGIN
+   IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'mydb') THEN
+      CREATE DATABASE mydb
+      WITH TEMPLATE = template0
+      ENCODING = 'UTF8'
+      LC_COLLATE = 'en_US.UTF-8'
+      LC_CTYPE = 'en_US.UTF-8';
+   END IF;
+END
+$do$;
 \c mydb
 
 CREATE TABLE IF NOT EXISTS example (

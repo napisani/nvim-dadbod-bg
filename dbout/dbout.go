@@ -13,7 +13,9 @@ type AttributeMap map[string]interface{}
 
 // Define constant string patterns
 const (
-	mysqlWarningPattern     = `^mysql: \[.*`
+	mysqlPattern            = `^mysql:*`
+	psqlPattern             = `^psql:*`
+	sqlitePattern           = `^sqlite:*`
 	postgresRowCountPattern = `^\((\d+) rows?\)`
 )
 
@@ -23,7 +25,9 @@ var ignoredRegexes []*regexp.Regexp
 // init function to compile the regexps when the package is initialized
 func init() {
 	patterns := []string{
-		mysqlWarningPattern,
+		mysqlPattern,
+		psqlPattern,
+		sqlitePattern,
 		postgresRowCountPattern,
 	}
 
@@ -71,6 +75,7 @@ func (t *Table) RemoveLastRow() {
 func (t *Table) ToString() string {
 	delim := " | "
 	str := fmt.Sprintf("Header: \n%v\n", strings.Join(t.Header, delim))
+	str += "Rows: \n"
 	for _, row := range t.Rows {
 		str += strings.Join(row, delim) + "\n"
 	}
@@ -115,9 +120,31 @@ type RowRule struct {
 	hasBorder bool
 }
 
+func isRangeOnLine(line string, cr ColumnRange) bool {
+	l := len(line)
+	if cr.start < 0 || cr.start >= l {
+		return false
+	}
+	if cr.end < 0 {
+		return false
+	}
+	if cr.end > l {
+		return false
+	}
+	if cr.start >= cr.end {
+		return false
+	}
+	return true
+}
+
 func (rr *RowRule) ParseLine(row string) []string {
+	if len(row) == 0 {
+		return []string{}
+	}
 	cols := []string{}
 	for _, r := range rr.ranges {
+		// log.Println("RowRule.ParseLine", r, row, len(row))
+
 		end := r.end
 		start := r.start
 		if end == -1 && start > -1 {
@@ -129,7 +156,7 @@ func (rr *RowRule) ParseLine(row string) []string {
 			}
 		}
 
-		if end <= len(row) && start > -1 {
+		if isRangeOnLine(row, ColumnRange{start, end}) {
 			col := row[start:end]
 			col = strings.TrimSpace(col)
 			cols = append(cols, col)
@@ -141,7 +168,7 @@ func (rr *RowRule) ParseLine(row string) []string {
 	return cols
 }
 
-func NewRowRuleFromDivider(line string) RowRule {
+func NewRowRuleFromDivider(line string, borders bool) RowRule {
 	ranges := []ColumnRange{}
 	start := 0
 	end := 0
@@ -159,7 +186,8 @@ func NewRowRuleFromDivider(line string) RowRule {
 			ranges = append(ranges, ColumnRange{start, -1})
 		}
 	}
-	rr := RowRule{ranges, isHeaderLineDivider(line)}
+	rr := RowRule{ranges, borders}
+	// log.Println("NewRowRuleFromDivider", rr)
 	return rr
 }
 
@@ -172,7 +200,7 @@ func isLineIgnored(line string) bool {
 	lineTrimmed := strings.TrimSpace(line)
 	for _, ignoredReg := range ignoredRegexes {
 		if ignoredReg.MatchString(lineTrimmed) {
-			log.Println("ignoring line:", line)
+			// log.Println("ignoring line:", line)
 			return true
 		}
 	}
@@ -262,25 +290,24 @@ func isHeaderLineDivider(line string) bool {
 	// regex to match - or + or space or |
 	allowedChars := regexp.MustCompile(`[-+|\s]`)
 	matching_char_count := len(allowedChars.FindAllString(line_trimmed, -1))
-	isDivider := matching_char_count == len(line_trimmed)
+	isDivider := matching_char_count == len(line_trimmed) && matching_char_count > 0
 	return isDivider
 }
 
-func ParseDBOutSubQueryResults(content string) []results.SubQueryResults {
-	var result []results.SubQueryResults
+func ParseDBOutTables(content string) []Table {
 	contentLines := splitContent(content)
-
+	tables := []Table{}
 	if len(contentLines) == 0 {
-		return result
+		return tables
 	}
 
+	borders := hasBorders(contentLines)
 	contentLines = trimBorders(contentLines)
 
 	if len(contentLines) == 0 {
-		return result
+		return tables
 	}
 
-	tables := []Table{}
 	var currentRule *RowRule
 	var currentTable *Table
 	for idx, line := range contentLines {
@@ -288,7 +315,8 @@ func ParseDBOutSubQueryResults(content string) []results.SubQueryResults {
 			continue
 		}
 		if isHeaderLineDivider(line) {
-			newRule := NewRowRuleFromDivider(line)
+			// log.Println("isHeaderLineDivider", line)
+			newRule := NewRowRuleFromDivider(line, borders)
 			currentRule = &newRule
 			lastLine := contentLines[idx-1]
 			if currentTable != nil {
@@ -302,19 +330,29 @@ func ParseDBOutSubQueryResults(content string) []results.SubQueryResults {
 			currentTable.SetHeader(header)
 			continue
 		}
-		if currentRule == nil {
+		if currentRule == nil || currentTable == nil || !currentTable.HasHeader() {
 			continue
 		}
-		currentTable.AddRow(currentRule.ParseLine(line))
+		parsedLine := currentRule.ParseLine(line)
+		if len(parsedLine) == 0 {
+			continue
+		}
+		currentTable.AddRow(parsedLine)
 	}
 
 	if currentTable != nil {
 		tables = append(tables, *currentTable)
 	}
 
+	return tables
+}
+
+func ParseDBOutSubQueryResults(content string) []results.SubQueryResults {
+	tables := ParseDBOutTables(content)
+
 	r := []results.SubQueryResults{}
 	for _, table := range tables {
-		if table.IsEmpty() && !table.HasHeader() {
+		if !table.HasHeader() {
 			continue
 		}
 		r = append(r, table.ToSubQueryResults())

@@ -24,9 +24,9 @@ func main() {
 			log.Fatalf("Error reading file %s: %v", file, err)
 		}
 
-		results := dbout.ParseDBOutSubQueryResults(content)
+		results := dbout.ParseDBOutTables(content)
 		for _, result := range results {
-			fmt.Printf("SubQueryResult: %+v\n", result)
+			fmt.Printf("%v\n", result.ToString())
 		}
 	}
 }
