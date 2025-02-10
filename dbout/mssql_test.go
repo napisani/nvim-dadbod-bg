@@ -7,7 +7,7 @@ import (
 )
 
 func TestParseDBOutTables_MSSQL(t *testing.T) {
-	content, err := ioutil.ReadFile("../test_data/mssql_manual.dbout")
+	content, err := ioutil.ReadFile("../test_data/mssql.dbout")
 	if err != nil {
 		t.Fatalf("Failed to read test data: %v", err)
 	}

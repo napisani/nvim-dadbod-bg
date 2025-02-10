@@ -7,7 +7,7 @@ import (
 )
 
 func TestParseDBOutTables_Postgres(t *testing.T) {
-	content, err := ioutil.ReadFile("../test_data/postgres_manual.dbout")
+	content, err := ioutil.ReadFile("../test_data/postgres.dbout")
 	if err != nil {
 		t.Fatalf("Failed to read test data: %v", err)
 	}

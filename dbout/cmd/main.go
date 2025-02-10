@@ -14,7 +14,7 @@ func main() {
 		"./test_data/mssql_manual.dbout",
 		"./test_data/postgres_manual.dbout",
 		"./test_data/sqlite_manual.dbout",
-		"./test_data/mysql_manual.dbout",
+		"./test_data/mysql2_manual.dbout",
 	}
 
 	for _, file := range files {

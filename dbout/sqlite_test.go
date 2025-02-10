@@ -7,7 +7,7 @@ import (
 )
 
 func TestParseDBOutTables_SQLite(t *testing.T) {
-	content, err := ioutil.ReadFile("../test_data/sqlite_manual.dbout")
+	content, err := ioutil.ReadFile("../test_data/sqlite.dbout")
 	if err != nil {
 		t.Fatalf("Failed to read test data: %v", err)
 	}

@@ -7,7 +7,7 @@ import (
 )
 
 func TestParseDBOutTables_MySQL(t *testing.T) {
-	content, err := ioutil.ReadFile("../test_data/mysql_manual.dbout")
+	content, err := ioutil.ReadFile("../test_data/mysql2.dbout")
 	if err != nil {
 		t.Fatalf("Failed to read test data: %v", err)
 	}
