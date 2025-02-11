@@ -1,6 +1,7 @@
 package results
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"path/filepath"
@@ -22,6 +23,21 @@ type SubQueryResults struct {
 	Type    string      `json:"type"`
 	Content interface{} `json:"content"`
 	Header  DataHeaders `json:"header"`
+}
+
+func (sqr SubQueryResults) String() string {
+	return fmt.Sprintf(
+		"SubQueryResults{\n"+
+			"    Prefix: %s,\n"+
+			"    Type: %s,\n"+
+			"    Content: %v,\n"+
+			"    Header: %v\n"+
+			"}",
+		sqr.Prefix,
+		sqr.Type,
+		sqr.Content,
+		sqr.Header,
+	)
 }
 
 type TypedQueryResults struct {

@@ -1,0 +1,11 @@
+AtlasLocalDev local4885 [direct: primary] test> 
+AtlasLocalDev local4885 [direct: primary] test> 
+AtlasLocalDev local4885 [direct: primary] test> switched to db badger
+AtlasLocalDev local4885 [direct: primary] badger> [
+  {
+    _id: ObjectId('64b1636cdffe6d85deb1464e'),
+    fileName: '20230713140211-enable_collaborators.js',
+    appliedAt: ISODate('2023-07-14T15:02:04.887Z')
+  }
+]
+

@@ -17,5 +17,8 @@ manifest:
 rundboutdriver:
 	go run ./dbout/cmd/main.go
 
+runjsondriver:
+	go run ./json/cmd/main.go
+
 clean:
 	rm -f nvim-dadbod-bg nvim-dadbod-bg.log && rm -rf web/dist
